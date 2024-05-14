@@ -3,15 +3,18 @@ CC = g++
 CFLAGS = -Wall -Wextra -std=c++11
 LIBS = -lSDL2 -lSDL2main -lSDL2_image -lSDL2_mixer
 
-OBJ = main.o window.o entity.o sprite.o
+all: main
 
-%.o: %.cpp
-	$(CC) -c -o $@ $< $(CFLAGS)
+main : main.o window.o sprite.o
+	$(CC) main.o window.o sprite.o -o main $(LIBS)
 
-main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+sprite.o : entity.hpp sprite.hpp sprite.cpp
+	$(CC) -c sprite.cpp entity.hpp
 
-.PHONY: clean
+window.o : window.cpp sprite.hpp
+	$(CC) -c window.cpp sprite.hpp
+
+
 
 clean:
-	rm -f *.o mainOBJ = main.o window.o entity.o sprite.o
+	rm -f *.o mainOBJ = main.o window.o sprite.o

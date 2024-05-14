@@ -9,7 +9,7 @@
 
 class Entity {
 public:
-    virtual ~Entity();
+    virtual ~Entity() = default;
 
     virtual void display() = 0; // Pure virtual function
     virtual void move(int dx, int dy) = 0; // Declaration of the move function
@@ -17,7 +17,7 @@ public:
     virtual int getY() = 0;
     virtual int getWidth() = 0;
     virtual int getHeight() = 0;
-    virtual std::string& getName();
+    virtual std::string& getName() = 0;
 
 protected:
     std::string _name;
