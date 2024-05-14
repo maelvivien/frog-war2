@@ -85,10 +85,10 @@ void Sprite::move(int dx, int dy) {
 
     if(dx == 1) xspeed = MAX_XSPEED;
     if(dx == -1) xspeed = -MAX_XSPEED;
-    if(xspeed > 0) signe = 1; // à changer
+    if(xspeed > 0) signe = 1; // à changer c'est pas top
     if(xspeed < 0) signe = -1;
     if(dx==0) xspeed -= signe * frottement; // apply friction
-    _x += xspeed;
+    
 
 
     // Apply gravity    
@@ -107,7 +107,16 @@ void Sprite::move(int dx, int dy) {
 
     if(_y + dy < 0) _y=0;
     if(_y > 1080 - _height) _y=1080 - _height;
-    _y += yspeed;
+
+    for (Entity* other : *_collisionVector) {
+        if (other != this && this->test_collide(other, xspeed, yspeed)) {
+            _x += xspeed;
+            _y += yspeed;
+      
+        }
+        
+    }
+    
     std::cout << "X: " << _x << ", Y: " << _y << std::endl;
 
 

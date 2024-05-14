@@ -104,49 +104,7 @@ void Window::display() {
             flip = false;
         }
         entity->move(0, 0); // actualisation of the entity
-/*
-        if (keyState[SDL_SCANCODE_UP]) {
-            state = true;
-            for (long unsigned int i = 0; i < collisionvector.size(); i++){
-                if (entity->test_collide(collisionvector[i], 0, -1)) state = false;
-                
-            }
-            if (state) entity->move(0,-1); // move up
-        }
-        if (keyState[SDL_SCANCODE_DOWN]) {
-            state = true;
-            for (long unsigned int i = 0; i < collisionvector.size(); i++){
-                if (entity->test_collide(collisionvector[i], 0, 1)) state = false;
-                
-            }
-            if (state) entity->move(0,1); // move down
-        }
-        if (keyState[SDL_SCANCODE_LEFT]) {
-            state = true;
-            for (long unsigned int i = 0; i < collisionvector.size(); i++){
-                if (entity->test_collide(collisionvector[i], -1, 0)) state = false;
-                
-            }
-            if (state) entity->move(-1, 0); // move left
-            flip = true;
-        }
-        if (keyState[SDL_SCANCODE_RIGHT]) {
-            state = true;
-            for (long unsigned int i = 0; i < collisionvector.size(); i++){
-                if (entity->test_collide(collisionvector[i], 1, 0)) state = false;
-                
-            }
-            if (state) entity->move(1,0); // move right
-            flip = false;
-        }
-        state = true;
-        for (long unsigned int i = 0; i < collisionvector.size(); i++){
-            if (entity->test_collide(collisionvector[i], 0, 5)) {
-                state = false;
-            }
-        }
-        entity->move(0, 0); // actualisation of the entity
-        */
+
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
         // Render the background
