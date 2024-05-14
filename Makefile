@@ -9,10 +9,10 @@ main : main.o window.o sprite.o
 	$(CC) main.o window.o sprite.o -o main $(LIBS)
 
 sprite.o : entity.hpp sprite.hpp sprite.cpp
-	$(CC) -c sprite.cpp entity.hpp
+	$(CC) -c sprite.cpp
 
 window.o : window.cpp sprite.hpp
-	$(CC) -c window.cpp sprite.hpp
+	$(CC) -c window.cpp
 
 
 

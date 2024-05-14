@@ -90,9 +90,26 @@ void Window::display() {
         }
 
         if (keyState[SDL_SCANCODE_UP]) {
+            entity->move(0, -1); // move up
+        }
+        if (keyState[SDL_SCANCODE_DOWN]) {
+            entity->move(0, 1); // move down
+        }
+        if (keyState[SDL_SCANCODE_LEFT]) {
+            entity->move(-1, 0); // move left
+            flip = true;
+        }
+        if (keyState[SDL_SCANCODE_RIGHT]) {
+            entity->move(1, 0); // move right
+            flip = false;
+        }
+        entity->move(0, 0); // actualisation of the entity
+/*
+        if (keyState[SDL_SCANCODE_UP]) {
             state = true;
             for (long unsigned int i = 0; i < collisionvector.size(); i++){
                 if (entity->test_collide(collisionvector[i], 0, -1)) state = false;
+                
             }
             if (state) entity->move(0,-1); // move up
         }
@@ -100,6 +117,7 @@ void Window::display() {
             state = true;
             for (long unsigned int i = 0; i < collisionvector.size(); i++){
                 if (entity->test_collide(collisionvector[i], 0, 1)) state = false;
+                
             }
             if (state) entity->move(0,1); // move down
         }
@@ -107,6 +125,7 @@ void Window::display() {
             state = true;
             for (long unsigned int i = 0; i < collisionvector.size(); i++){
                 if (entity->test_collide(collisionvector[i], -1, 0)) state = false;
+                
             }
             if (state) entity->move(-1, 0); // move left
             flip = true;
@@ -115,6 +134,7 @@ void Window::display() {
             state = true;
             for (long unsigned int i = 0; i < collisionvector.size(); i++){
                 if (entity->test_collide(collisionvector[i], 1, 0)) state = false;
+                
             }
             if (state) entity->move(1,0); // move right
             flip = false;
@@ -125,8 +145,8 @@ void Window::display() {
                 state = false;
             }
         }
-        if (state) entity->move(0, 0); // actualisation of the entity
-
+        entity->move(0, 0); // actualisation of the entity
+        */
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
         // Render the background

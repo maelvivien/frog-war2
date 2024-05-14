@@ -1,7 +1,10 @@
 // sprite.cpp
 #include "sprite.hpp"
+#include <vector>
+#include <iostream>
 
-Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns){
+Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, std::vector<Entity*>* collisionVector)
+: _collisionVector(collisionVector) {
     _renderer = renderer;
     _name = name;
     _x = x;
@@ -21,6 +24,7 @@ Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::strin
     _texture = SDL_CreateTextureFromSurface(_renderer, image);
     SDL_FreeSurface(image);
 }
+
 
 Sprite::Sprite(SDL_Renderer* renderer, int x, int y, int width, int height) {
     _renderer = renderer;
@@ -104,6 +108,9 @@ void Sprite::move(int dx, int dy) {
     if(_y + dy < 0) _y=0;
     if(_y > 1080 - _height) _y=1080 - _height;
     _y += yspeed;
+    std::cout << "X: " << _x << ", Y: " << _y << std::endl;
+
+
 }
 
 std::string& Sprite::getName(){
@@ -127,7 +134,7 @@ int Sprite::getWidth() {
 }
 
 bool Sprite::test_collide(Entity* test, int dx, int dy){
-    if ((getX() + getWidth() + dx >= test->getX() && getX() + dx <= test->getX() + test->getWidth())
-        && (getY() + getHeight() + dy >= test->getY() && getY() + dy <= test->getY() + test->getHeight())) return true;
+    if ((getX() + getWidth() + xspeed >= test->getX() && getX() + xspeed <= test->getX() + test->getWidth())
+        && (getY() + getHeight() + yspeed >= test->getY() && getY() + yspeed <= test->getY() + test->getHeight())) return true;
     return false;
 }
