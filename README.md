@@ -1,2 +1,2 @@
-# frog-war2
-frog-war en mieux
+# frogwar
+little C++ game
