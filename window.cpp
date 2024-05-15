@@ -39,9 +39,11 @@ void Window::window_init(){
     collisionvector.clear();
     
     if (image_path == "texture/background.png") {
-        Sprite* collision = new Sprite(renderer, 400, 300, 200, 20);
-        collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 0, 900, 1920, 120);
+        Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
+        collisionvector.push_back(plateform1);
+        Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
+        collisionvector.push_back(plateform2);
+        /*collision = new Sprite(renderer, 0, 900, 1920, 120);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 925, 775, 150, 220);
         collisionvector.push_back(collision);
@@ -52,7 +54,7 @@ void Window::window_init(){
         collision = new Sprite(renderer, 1630, 0, 320, 185);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1900, 150, 120, 150);
-        collisionvector.push_back(collision);
+        collisionvector.push_back(collision);*/
         Sprite::setCollisionVector(&collisionvector);
         //gMusic = Mix_LoadMUS( "sound/music.ogg");
     }

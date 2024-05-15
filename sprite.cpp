@@ -31,6 +31,8 @@ void Sprite::setCollisionVector(std::vector<Entity*>* collisionVector) {
     _collisionVector = collisionVector;
 }
 
+
+
 Sprite::Sprite(SDL_Renderer* renderer, int x, int y, int width, int height) {
     _renderer = renderer;
     _name = "";
@@ -113,22 +115,45 @@ void Sprite::move(int dx, int dy) {
     if(_y + dy < 0) _y=0;
     if(_y > 1080 - _height) _y=1080 - _height;
 
-    for (Entity* other : *_collisionVector) {
-        if (other != this && this->test_collide(other, xspeed, yspeed)) {
-            return;
-            
-      
+
+    bool isColliding = false;
+    bool onGround = false;
+
+for (Entity* other : *_collisionVector) {
+    if (other != this) {
+        // Check for horizontal collision
+        if (xspeed != 0 && this->test_collide(other, xspeed, 0)) {
+            // Adjust the sprite's horizontal position
+            if (xspeed > 0) { // Moving right
+                _x -= 1;
+            } else if (xspeed < 0) { // Moving left
+                _x += 1;
+            }
+            if (!onGround) {
+                xspeed = 0; // Stop horizontal movement
+            }
         }
-        else {
-            _x += xspeed;
-            _y += yspeed;
+
+        // Check for vertical collision
+        if (yspeed != 0 && this->test_collide(other, 0, yspeed)) {
+            // Adjust the sprite's vertical position
+            if (yspeed > 0) { // Moving down
+                _y -= 1;
+                yspeed = 0; // Stop falling
+                onGround = true;
+            } else if (yspeed < 0) { // Moving up
+                _y += 1;
+                yspeed = 0; // Stop vertical movement
+            }
         }
-        
     }
-    
-    
+}
 
+if (!onGround) {
+    _y += yspeed; // Apply gravity
+}
 
+_x += xspeed;
 }
 
 std::string& Sprite::getName(){
