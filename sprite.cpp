@@ -3,8 +3,8 @@
 #include <vector>
 #include <iostream>
 
-Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, std::vector<Entity*>* collisionVector)
-: _collisionVector(collisionVector) {
+Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns)
+{
     _renderer = renderer;
     _name = name;
     _x = x;
@@ -25,6 +25,11 @@ Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::strin
     SDL_FreeSurface(image);
 }
 
+std::vector<Entity*>* Sprite::_collisionVector = nullptr;
+
+void Sprite::setCollisionVector(std::vector<Entity*>* collisionVector) {
+    _collisionVector = collisionVector;
+}
 
 Sprite::Sprite(SDL_Renderer* renderer, int x, int y, int width, int height) {
     _renderer = renderer;
@@ -110,14 +115,18 @@ void Sprite::move(int dx, int dy) {
 
     for (Entity* other : *_collisionVector) {
         if (other != this && this->test_collide(other, xspeed, yspeed)) {
+            return;
+            
+      
+        }
+        else {
             _x += xspeed;
             _y += yspeed;
-      
         }
         
     }
     
-    std::cout << "X: " << _x << ", Y: " << _y << std::endl;
+    
 
 
 }

@@ -53,6 +53,7 @@ void Window::window_init(){
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1900, 150, 120, 150);
         collisionvector.push_back(collision);
+        Sprite::setCollisionVector(&collisionvector);
         //gMusic = Mix_LoadMUS( "sound/music.ogg");
     }
     //if (image_path == "texture/background2.png") {
