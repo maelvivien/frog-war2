@@ -27,8 +27,7 @@ Window::Window(const std::string& image_path, int width, int height)
 
     entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 200, 200, 300, 250, 10, 10);
     entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 300, 250, 100, 100, 16, 16);
-    entityvector.push_back(entity);
-    entityvector.push_back(entity2);
+    
     window_init();
 
 }
@@ -38,7 +37,15 @@ void Window::window_init(){
     texture = SDL_CreateTextureFromSurface(renderer, image);
     SDL_FreeSurface(image);
     collisionvector.clear();
-    
+    entityvector.clear();
+    collisionvector.push_back(entity);
+    if (entity2->getHealth()) {
+        printf("Test\n");
+        collisionvector.push_back(entity2);
+    }
+    entityvector.push_back(entity);
+    if (entity2->getHealth()) entityvector.push_back(entity2);
+
     if (image_path == "texture/background.png") {
         //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
         //collisionvector.push_back(plateform1);
@@ -68,6 +75,7 @@ void Window::window_init(){
 
 Window::~Window() {
     delete entity;
+    delete entity2;
     for (long unsigned int i = 0; i < collisionvector.size(); i++){
         delete collisionvector[i];
     }
@@ -83,7 +91,8 @@ void Window::display() {
     SDL_Event event;
 
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
-    bool flip = false;
+    bool flip = false; // Handle the direction of the sprite
+    bool flip2 = false; // False if sprite is toward the right
     bool state = true;
     while (running) {
         
@@ -118,43 +127,22 @@ void Window::display() {
         }
         if (keyState[SDL_SCANCODE_J]) {
             entity2->move(-1, 0); // move left
-            flip = true;
+            flip2 = true;
         }
         if (keyState[SDL_SCANCODE_L]) {
             entity2->move(1, 0); // move right
-            flip = false;
+            flip2 = false;
         }
 
         /////////////////////////////////////////////////////////////////////////////////
 
         if (keyState[SDL_SCANCODE_Q]) {
             
-            if (1 != 1) { // Turned toward the right side of the screen
-                for (long unsigned int i = 0; i < entityvector.size(); i++) {
-                    if (entityvector[i]->getName() != entity->getName()){
-                        if (entity->test_collide(entityvector[i], 50, 0)){
-                            printf("collision\n");
-                        }
-                        else {
-                            printf("miss\n");
-                        }
-                    }
-                }
+            if (!flip) { // Turned toward the right side of the screen
+                entity->attack(1,50, entityvector);
             }
             else {
-                printf("PROC\n");
-                for (long unsigned int i = 0; i < entityvector.size(); i++) {
-                    printf("Test\n");
-                    if (entityvector[i]->getName() != entity->getName()){
-                        printf("TEST2\n");
-                        if (entity->test_collide(entityvector[i], -50, 0)){
-                            printf("collision\n");
-                        }
-                        else {
-                            printf("miss\n");
-                        }
-                    }
-                }
+                entity->attack(1,-50, entityvector);
             }
         }
 
@@ -171,9 +159,24 @@ void Window::display() {
         backgroundRect.h = height;
         SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
 
-        SDL_Rect testrect = {20, 20, 150, 150};
+        SDL_Rect testrect = {entity->getX(), entity->getY(), entity->getWidth(), entity->getHeight()};
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-        SDL_RenderFillRect(renderer, &testrect);
+        SDL_RenderDrawRect(renderer, &testrect);
+
+        if (flip) {
+            SDL_Rect testrecthitbox = {entity->getX()-50, entity->getY(), entity->getWidth(), entity->getHeight()};
+            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+            SDL_RenderDrawRect(renderer, &testrecthitbox);
+        }
+        else {
+            SDL_Rect testrecthitbox = {entity->getX()+50, entity->getY(), entity->getWidth(), entity->getHeight()};
+            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+            SDL_RenderDrawRect(renderer, &testrecthitbox);
+        }
+
+        SDL_Rect testrect2 = {entity2->getX(), entity2->getY(), entity2->getWidth(), entity2->getHeight()};
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+        SDL_RenderDrawRect(renderer, &testrect2);
 
         // Animate and display the sprite
         Sprite* sprite = dynamic_cast<Sprite*>(entity);
@@ -181,10 +184,16 @@ void Window::display() {
             sprite->animate(0, flip); // Animate the first row of the sprite sheet
             entity->display(); // Render the sprite to the renderer
         }
-        Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
-        if (sprite2 != nullptr) {
-            sprite2->animate(0, flip); // Animate the first row of the sprite sheet
-            entity2->display(); // Render the sprite to the renderer
+        if (entity2->getHealth()) {
+            Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
+            if (sprite2 != nullptr) {
+                sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
+                entity2->display(); // Render the sprite to the renderer
+            }
+        }
+        if (test && !entity2->getHealth()) {
+            window_init();
+            test = false;
         }
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

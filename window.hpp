@@ -28,6 +28,7 @@ private:
     std::vector<Entity*> entityvector;
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
+    bool test = true;
 };
 
 #endif // WINDOW_HPP

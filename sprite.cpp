@@ -25,10 +25,10 @@ Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::strin
     SDL_FreeSurface(image);
 }
 
-std::vector<Entity*>* Sprite::_collisionVector = nullptr;
+std::vector<Entity*>* Sprite::_collisionvector = nullptr;
 
-void Sprite::setCollisionVector(std::vector<Entity*>* collisionVector) {
-    _collisionVector = collisionVector;
+void Sprite::setCollisionVector(std::vector<Entity*>* collisionvector) {
+    _collisionvector = collisionvector;
 }
 
 
@@ -118,7 +118,7 @@ void Sprite::move(int dx, int dy) {
     bool isColliding = false;
     bool onGround = false;
 
-    for (Entity* other : *_collisionVector) {
+    for (Entity* other : *_collisionvector) {
         if (other != this) {
             // Check for horizontal collision
             if (xspeed != 0 && this->test_collide(other, xspeed, 0)) {
@@ -134,7 +134,7 @@ void Sprite::move(int dx, int dy) {
             }
 
             // Check for vertical collision
-            if (this->test_collide(other, 0, yspeed)) {
+            if (yspeed != 0 && this->test_collide(other, 0, yspeed)) {
                 // Adjust the sprite's vertical position
                 if (yspeed > 0) { // Moving down
                     _y -= 1;
@@ -150,10 +150,34 @@ void Sprite::move(int dx, int dy) {
 
     if (!onGround) {
         _y += yspeed; // Apply gravity
+    }
+    else {
         jumpTime = 0;
     }
 
     _x += xspeed;
+}
+
+void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
+    for (long unsigned int i = 0; i < entityvector.size(); i++) {
+        if (entityvector[i]->getName() != getName()){
+            if (test_collide(entityvector[i], size, 0)){
+                printf("collision\n");
+                entityvector[i]->setHP(0);
+            }
+            else {
+                printf("miss\n");
+            }
+        }
+    }
+}
+
+void Sprite::setHP(int value) {
+    _health = value;
+}
+
+int Sprite::getHealth() {
+    return _health;
 }
 
 std::string& Sprite::getName(){

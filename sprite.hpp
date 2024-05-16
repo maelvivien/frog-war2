@@ -11,19 +11,23 @@ public:
     Sprite(SDL_Renderer* renderer, int x, int y, int width, int height);
     ~Sprite();
 
-    static std::vector<Entity*>* _collisionVector;
-    static void setCollisionVector(std::vector<Entity*>* collisionVector);
+    static std::vector<Entity*>* _collisionvector;
+    static void setCollisionVector(std::vector<Entity*>* collisionvector);
     virtual void display() override;
     void animate(int row, bool flip = false);
     std::string& getName() override;
+    bool test_collide(Entity* test, int dx, int dy);
+    void move(int dx, int dy) override;
+    void attack(int damage, int size, std::vector<Entity*> entityvector);
+    void setHP(int value);
     int getX();
     int getY();
     int getWidth();
     int getHeight();
-    bool test_collide(Entity* test, int dx, int dy);
-    void move(int dx, int dy) override;
+    int getHealth();
 
 private:
+    int _health = 3;
     int _frameWidth, _frameHeight;
     int _numFrames, _numColumns;
     int _currentFrame;

@@ -18,6 +18,7 @@ public:
     virtual int getWidth() = 0;
     virtual int getHeight() = 0;
     virtual std::string& getName() = 0;
+    virtual void setHP(int value) = 0;
 
 protected:
     std::string _name;
