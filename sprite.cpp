@@ -143,9 +143,6 @@ void Sprite::move(int dx, int dy) {
                 } else if (yspeed < 0) { // Moving up
                     _y += 1;
                     yspeed = 0; // Stop vertical movement
-                } else if (yspeed == 0) {
-                    _y -= 1;
-                    onGround = true;
                 }
             }
         }

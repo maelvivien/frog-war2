@@ -25,9 +25,10 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    //entity = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 300, 250, 150, 150, 10, 10);
-    entity = new Sprite(renderer, "test1", "texture/frogknight3.png", 850, 100, 300, 250, 100, 100, 16, 16);
+    entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 200, 200, 300, 250, 10, 10);
+    entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 300, 250, 100, 100, 16, 16);
     entityvector.push_back(entity);
+    entityvector.push_back(entity2);
     window_init();
 
 }
@@ -106,7 +107,59 @@ void Window::display() {
             entity->move(1, 0); // move right
             flip = false;
         }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        if (keyState[SDL_SCANCODE_I]) {
+            entity2->move(0, -1); // move up
+        }
+        if (keyState[SDL_SCANCODE_K]) {
+            entity2->move(0, 1); // move down
+        }
+        if (keyState[SDL_SCANCODE_J]) {
+            entity2->move(-1, 0); // move left
+            flip = true;
+        }
+        if (keyState[SDL_SCANCODE_L]) {
+            entity2->move(1, 0); // move right
+            flip = false;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        if (keyState[SDL_SCANCODE_Q]) {
+            
+            if (1 != 1) { // Turned toward the right side of the screen
+                for (long unsigned int i = 0; i < entityvector.size(); i++) {
+                    if (entityvector[i]->getName() != entity->getName()){
+                        if (entity->test_collide(entityvector[i], 50, 0)){
+                            printf("collision\n");
+                        }
+                        else {
+                            printf("miss\n");
+                        }
+                    }
+                }
+            }
+            else {
+                printf("PROC\n");
+                for (long unsigned int i = 0; i < entityvector.size(); i++) {
+                    printf("Test\n");
+                    if (entityvector[i]->getName() != entity->getName()){
+                        printf("TEST2\n");
+                        if (entity->test_collide(entityvector[i], -50, 0)){
+                            printf("collision\n");
+                        }
+                        else {
+                            printf("miss\n");
+                        }
+                    }
+                }
+            }
+        }
+
         entity->move(0, 0); // actualisation of the entity
+        entity2->move(0,0);
 
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
@@ -118,13 +171,21 @@ void Window::display() {
         backgroundRect.h = height;
         SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
 
+        SDL_Rect testrect = {20, 20, 150, 150};
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+        SDL_RenderFillRect(renderer, &testrect);
+
         // Animate and display the sprite
         Sprite* sprite = dynamic_cast<Sprite*>(entity);
         if (sprite != nullptr) {
             sprite->animate(0, flip); // Animate the first row of the sprite sheet
             entity->display(); // Render the sprite to the renderer
         }
-
+        Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
+        if (sprite2 != nullptr) {
+            sprite2->animate(0, flip); // Animate the first row of the sprite sheet
+            entity2->display(); // Render the sprite to the renderer
+        }
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }

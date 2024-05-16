@@ -24,6 +24,7 @@ private:
     SDL_Renderer* renderer;
     SDL_Texture* texture;
     Sprite* entity;
+    Sprite* entity2;
     std::vector<Entity*> entityvector;
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
