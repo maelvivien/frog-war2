@@ -12,10 +12,11 @@
 
 class Window {
 public:
-    Window(const std::string& image_path, int width, int height);
+    Window(const std::string& image_path, int world_width, int world_height, int view_width, int view_height);
     void window_init();
     ~Window();
     void display();
+    
 
 private:
     int width, height;
@@ -29,6 +30,10 @@ private:
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
     bool test = true;
+    int viewport_x;
+    int viewport_y;
+    int view_width;
+    int view_height;
 };
 
 #endif // WINDOW_HPP

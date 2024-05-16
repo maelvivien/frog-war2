@@ -4,8 +4,9 @@
 #include <chrono>
 #include <thread>
 
-Window::Window(const std::string& image_path, int width, int height)
-    : width(width), height(height), image_path(image_path) {
+// window.cpp
+    Window::Window(const std::string& image_path, int world_width, int world_height, int view_width, int view_height)
+    : view_width(view_width), view_height(view_height), image_path(image_path), viewport_x(0) {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_VIDEO) < 0) {
         printf("Error initializing the process\n");
@@ -15,20 +16,23 @@ Window::Window(const std::string& image_path, int width, int height)
         printf("Audio could not be initialized\n");
     }
 
-    window = SDL_CreateWindow("Window Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Frogwar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, view_width, view_height, SDL_WINDOW_SHOWN);
     if (window == nullptr) {
-        // handle error
+        // faudrait gerer les erreurs
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr) {
-        // handle error
+        //
     }
+    
+    
 
     entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 200, 200, 300, 250, 10, 10);
     entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 300, 250, 100, 100, 16, 16);
-    
+
     window_init();
+   
 
 }
 
@@ -46,14 +50,14 @@ void Window::window_init(){
     entityvector.push_back(entity);
     if (entity2->getHealth()) entityvector.push_back(entity2);
 
-    if (image_path == "texture/background.png") {
+    if (image_path == "texture/grandbackground.png") {
         //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
         //collisionvector.push_back(plateform1);
         //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
         //collisionvector.push_back(plateform2);
-        Sprite * collision = new Sprite(renderer, 0, 900, 1920, 120);
+        Sprite * collision = new Sprite(renderer, 0, 800, 1920, 120);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 925, 775, 150, 220);
+        /*collision = new Sprite(renderer, 925, 775, 150, 220);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1075, 535, 220, 620);
         collisionvector.push_back(collision);
@@ -62,7 +66,7 @@ void Window::window_init(){
         collision = new Sprite(renderer, 1630, 0, 320, 185);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1900, 150, 120, 150);
-        collisionvector.push_back(collision);
+        collisionvector.push_back(collision);*/
         Sprite::setCollisionVector(&collisionvector);
         //gMusic = Mix_LoadMUS( "sound/music.ogg");
     }
@@ -163,13 +167,20 @@ void Window::display() {
 
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
-        // Render the background
-        SDL_Rect backgroundRect;
-        backgroundRect.x = 0;
-        backgroundRect.y = 0;
-        backgroundRect.w = width;
-        backgroundRect.h = height;
-        SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
+        // Get the x-coordinate of the first sprite
+        int sprite_x = entity->getX();
+
+        // Calculate the new viewport x-coordinate
+        int new_viewport_x = sprite_x - view_width / 2;
+
+        // Ensure that the new viewport x-coordinate is within the bounds of the texture
+        new_viewport_x = std::max(0, std::min(new_viewport_x, 2692 - view_width));
+
+        // Render a part of the background
+        SDL_Rect srcRect = {new_viewport_x, 0, view_width, view_height}; // Set the source rectangle to the current
+        SDL_Rect destRect = {0, 0, view_width, view_height}; // Set the destination rectangle to the size of the window
+        SDL_RenderCopy(renderer, texture, &srcRect, &destRect); // Render the part of the texture that's in the viewport to the window
+
 
         SDL_Rect testrect = {entity->getX(), entity->getY(), entity->getWidth(), entity->getHeight()};
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
