@@ -17,7 +17,7 @@ public:
     void animate(int row, bool flip = false);
     std::string& getName() override;
     bool test_collide(Entity* test, int dx, int dy);
-    void move(int dx, int dy) override;
+    void move(int dx, int dy, bool jump = true) override;
     void attack(int damage, int size, std::vector<Entity*> entityvector);
     void setHP(int value);
     int getX();

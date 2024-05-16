@@ -85,7 +85,7 @@ void Sprite::animate(int row, bool flip) {
     SDL_RenderCopyEx(_renderer, _texture, &srcRect, &dstRect, 0, NULL, _flipType);
 }
 
-void Sprite::move(int dx, int dy) {
+void Sprite::move(int dx, int dy,bool jump) {
         // lateral movement
     if(_x < 0) _x=0;
     if(_x > 1920 - _width) _x = 1920 - _width;
@@ -148,14 +148,18 @@ void Sprite::move(int dx, int dy) {
         }
     }
 
-    if (!onGround) {
-        _y += yspeed; // Apply gravity
+        if (!onGround) {
+        _y += yspeed; // Apply gravity       
     }
-    else {
+    else if(!jump){
         jumpTime = 0;
-    }
+
+    } 
 
     _x += xspeed;
+    std::cout << "_x: " << _x << ", _y: " << _y << std::endl;
+    //std::cout << "jumpTime: " << jumpTime << std::endl;
+
 }
 
 void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){

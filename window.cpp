@@ -94,6 +94,8 @@ void Window::display() {
     bool flip = false; // Handle the direction of the sprite
     bool flip2 = false; // False if sprite is toward the right
     bool state = true;
+    bool isJumping1 = false;
+    bool isJumping2 = false;
     while (running) {
         
         while (SDL_PollEvent(&event)) {
@@ -104,6 +106,7 @@ void Window::display() {
 
         if (keyState[SDL_SCANCODE_UP]) {
             entity->move(0, -1); // move up
+            isJumping1 = true;
         }
         if (keyState[SDL_SCANCODE_DOWN]) {
             entity->move(0, 1); // move down
@@ -117,10 +120,15 @@ void Window::display() {
             flip = false;
         }
 
+        if (!keyState[SDL_SCANCODE_UP]) {
+            isJumping1 = false;
+        }
+
         ///////////////////////////////////////////////////////////////////////////
 
         if (keyState[SDL_SCANCODE_I]) {
             entity2->move(0, -1); // move up
+            isJumping2 = true;
         }
         if (keyState[SDL_SCANCODE_K]) {
             entity2->move(0, 1); // move down
@@ -133,6 +141,10 @@ void Window::display() {
             entity2->move(1, 0); // move right
             flip2 = false;
         }
+        if (!keyState[SDL_SCANCODE_I]) {
+            isJumping2 = false;
+        }
+
 
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -146,8 +158,8 @@ void Window::display() {
             }
         }
 
-        entity->move(0, 0); // actualisation of the entity
-        entity2->move(0,0);
+        entity->move(0, 0,isJumping1); // actualisation of the entity
+        entity2->move(0,0,isJumping2);
 
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
