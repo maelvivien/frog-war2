@@ -126,6 +126,6 @@ void Window::display() {
         }
 
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 }

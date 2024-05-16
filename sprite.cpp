@@ -86,13 +86,55 @@ void Sprite::animate(int row, bool flip) {
 }
 
 void Sprite::move(int dx, int dy) {
-        // lateral movement
-    if(_x < 0) _x=0;
-    if(_x > 1920 - _width) _x = 1920 - _width;
+        // Avoid going out of the window
+    if (_x + dx < 0) {
+        _x = 0;
+    } else if (_x + dx > 1920 - _width) {
+        _x = 1920 - _width;
+    } else {
+        _x += dx;
+    }
 
-    if(dx == 1) xspeed = MAX_XSPEED;
-    if(dx == -1) xspeed = -MAX_XSPEED;
+    if (_y + dy < 0) {
+        _y = 0;
+    } else if (_y + dy > 1080 - _height) {
+        _y = 1080 - _height;
+    } else {
+        _y += dy;
+    }
+
+    // Check for collision
+    for (Entity* other : *_collisionVector) {
+    if (other != this) {
+        // Check for horizontal collision
+        if (dx != 0 && this->test_collide(other, dx, 0)) {
+            // Adjust the sprite's horizontal position
+            if (dx > 0) { // Moving right
+                _x -= 1;
+            } else if (dx < 0) { // Moving left
+                _x += 1;
+            }
+            
+        }
+    }
+    if (dy != 0 && this->test_collide(other, 0, dy)) {
+            // Adjust the sprite's vertical position
+            if (dy > 0) { // Moving down
+                _y -= 1;
+            } else if (dy < 0) { // Moving up
+                _y += 1;
+            }
+        }
+    }
+
     
+
+    
+    
+
+   /* if(dx == 1) xspeed = MAX_XSPEED;
+    if(dx == -1) xspeed = -MAX_XSPEED;
+
    if(xspeed>0)xspeed -= frottement;
    if(xspeed<0)xspeed += frottement;
 
@@ -151,8 +193,9 @@ for (Entity* other : *_collisionVector) {
 if (!onGround) {
     _y += yspeed; // Apply gravity
 }
+if(dy == 1)_y+=1;
 
-_x += xspeed;
+_x += xspeed;*/
 }
 
 std::string& Sprite::getName(){
