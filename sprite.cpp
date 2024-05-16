@@ -92,10 +92,9 @@ void Sprite::move(int dx, int dy) {
 
     if(dx == 1) xspeed = MAX_XSPEED;
     if(dx == -1) xspeed = -MAX_XSPEED;
-    if(xspeed > 0) signe = 1; // à changer c'est pas top
-    if(xspeed < 0) signe = -1;
-    if(dx==0) xspeed -= signe * frottement; // apply friction
     
+   if(xspeed>0)xspeed -= frottement;
+   if(xspeed<0)xspeed += frottement;
 
 
     // Apply gravity    
