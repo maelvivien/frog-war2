@@ -85,63 +85,14 @@ void Sprite::animate(int row, bool flip) {
     SDL_RenderCopyEx(_renderer, _texture, &srcRect, &dstRect, 0, NULL, _flipType);
 }
 
-<<<<<<< Updated upstream
-void Sprite::move(int dx, int dy) {
-        // Avoid going out of the window
-    if (_x + dx < 0) {
-        _x = 0;
-    } else if (_x + dx > 1920 - _width) {
-        _x = 1920 - _width;
-    } else {
-        _x += dx;
-    }
-
-    if (_y + dy < 0) {
-        _y = 0;
-    } else if (_y + dy > 1080 - _height) {
-        _y = 1080 - _height;
-    } else {
-        _y += dy;
-    }
-
-    // Check for collision
-    for (Entity* other : *_collisionVector) {
-    if (other != this) {
-        // Check for horizontal collision
-        if (dx != 0 && this->test_collide(other, dx, 0)) {
-            // Adjust the sprite's horizontal position
-            if (dx > 0) { // Moving right
-                _x -= 1;
-            } else if (dx < 0) { // Moving left
-                _x += 1;
-            }
-            
-        }
-    }
-    if (dy != 0 && this->test_collide(other, 0, dy)) {
-            // Adjust the sprite's vertical position
-            if (dy > 0) { // Moving down
-                _y -= 1;
-            } else if (dy < 0) { // Moving up
-                _y += 1;
-            }
-        }
-    }
-=======
 void Sprite::move(int dx, int dy, bool jump) {
         // lateral movement
     if(_x < 0) _x=0;
     if(_x > 1920 - _width) _x = 1920 - _width;
->>>>>>> Stashed changes
 
-    
-
-    
-    
-
-   /* if(dx == 1) xspeed = MAX_XSPEED;
+    if(dx == 1) xspeed = MAX_XSPEED;
     if(dx == -1) xspeed = -MAX_XSPEED;
-
+    
    if(xspeed>0)xspeed -= frottement;
    if(xspeed<0)xspeed += frottement;
 
@@ -167,44 +118,35 @@ void Sprite::move(int dx, int dy, bool jump) {
     bool isColliding = false;
     bool onGround = false;
 
-for (Entity* other : *_collisionVector) {
-    if (other != this) {
-        // Check for horizontal collision
-        if (xspeed != 0 && this->test_collide(other, xspeed, 0)) {
-            // Adjust the sprite's horizontal position
-            if (xspeed > 0) { // Moving right
-                _x -= 1;
-            } else if (xspeed < 0) { // Moving left
-                _x += 1;
+    for (Entity* other : *_collisionVector) {
+        if (other != this) {
+            // Check for horizontal collision
+            if (xspeed != 0 && this->test_collide(other, xspeed, 0)) {
+                // Adjust the sprite's horizontal position
+                if (xspeed > 0) { // Moving right
+                    _x -= 1;
+                } else if (xspeed < 0) { // Moving left
+                    _x += 1;
+                }
+                if (!onGround) {
+                    xspeed = 0; // Stop horizontal movement
+                }
             }
-            if (!onGround) {
-                xspeed = 0; // Stop horizontal movement
-            }
-        }
 
-        // Check for vertical collision
-        if (yspeed != 0 && this->test_collide(other, 0, yspeed)) {
-            // Adjust the sprite's vertical position
-            if (yspeed > 0) { // Moving down
-                _y -= 1;
-                yspeed = 0; // Stop falling
-                onGround = true;
-            } else if (yspeed < 0) { // Moving up
-                _y += 1;
-                yspeed = 0; // Stop vertical movement
+            // Check for vertical collision
+            if (this->test_collide(other, 0, yspeed)) {
+                // Adjust the sprite's vertical position
+                if (yspeed > 0) { // Moving down
+                    _y -= 1;
+                    yspeed = 0; // Stop falling
+                    onGround = true;
+                } else if (yspeed < 0) { // Moving up
+                    _y += 1;
+                    yspeed = 0; // Stop vertical movement
+                }
             }
         }
     }
-<<<<<<< Updated upstream
-}
-
-if (!onGround) {
-    _y += yspeed; // Apply gravity
-}
-if(dy == 1)_y+=1;
-
-_x += xspeed;*/
-=======
     if (!onGround) {
         _y += yspeed; // Apply gravity       
     }
@@ -216,7 +158,6 @@ _x += xspeed;*/
     _x += xspeed;
     std::cout << "_x: " << _x << ", _y: " << _y << std::endl;
     //std::cout << "jumpTime: " << jumpTime << std::endl;
->>>>>>> Stashed changes
 }
 
 std::string& Sprite::getName(){
@@ -240,7 +181,7 @@ int Sprite::getWidth() {
 }
 
 bool Sprite::test_collide(Entity* test, int dx, int dy){
-    if ((getX() + getWidth() + xspeed >= test->getX() && getX() + xspeed <= test->getX() + test->getWidth())
-        && (getY() + getHeight() + yspeed >= test->getY() && getY() + yspeed <= test->getY() + test->getHeight())) return true;
+    if ((getX() + getWidth() + dx > test->getX() && getX() + dx < test->getX() + test->getWidth())
+        && (getY() + getHeight() + dy > test->getY() && getY() + dy < test->getY() + test->getHeight())) return true;
     return false;
 }
