@@ -83,30 +83,96 @@ void Window::display() {
 
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
     bool flip = false;
+    bool flip2 = false;
     bool state = true;
+    bool isJumping1 = false;
+    bool isJumping2 = false;
+
     while (running) {
-        
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             }
         }
 
+        const Uint8* keyState = SDL_GetKeyboardState(NULL);
+
         if (keyState[SDL_SCANCODE_UP]) {
             entity->move(0, -1); // move up
-        }
-        if (keyState[SDL_SCANCODE_DOWN]) {
+            isJumping1 = true;
+        } else if (keyState[SDL_SCANCODE_DOWN]) {
             entity->move(0, 1); // move down
         }
+
         if (keyState[SDL_SCANCODE_LEFT]) {
             entity->move(-1, 0); // move left
             flip = true;
-        }
-        if (keyState[SDL_SCANCODE_RIGHT]) {
+        } else if (keyState[SDL_SCANCODE_RIGHT]) {
             entity->move(1, 0); // move right
             flip = false;
         }
+<<<<<<< Updated upstream
         entity->move(0, 0); // actualisation of the entity
+=======
+
+        if (!keyState[SDL_SCANCODE_UP]) {
+            isJumping1 = false;
+        }
+        
+        ///////////////////////////////////////////////////////////////////////////
+
+        if (keyState[SDL_SCANCODE_I]) {
+            entity2->move(0, -1); // move up
+        }
+        if (keyState[SDL_SCANCODE_K]) {
+            entity2->move(0, 1); // move down
+        }
+        if (keyState[SDL_SCANCODE_J]) {
+            entity2->move(-1, 0); // move left
+            flip2 = true;
+        }
+        if (keyState[SDL_SCANCODE_L]) {
+            entity2->move(1, 0); // move right
+            flip2 = false;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        if (keyState[SDL_SCANCODE_Q]) {
+            
+            if (1 != 1) { // Turned toward the right side of the screen
+                for (long unsigned int i = 0; i < entityvector.size(); i++) {
+                    if (entityvector[i]->getName() != entity->getName()){
+                        if (entity->test_collide(entityvector[i], 50, 0)){
+                            printf("collision\n");
+                        }
+                        else {
+                            printf("miss\n");
+                        }
+                    }
+                }
+            }
+            else {
+                printf("PROC\n");
+                for (long unsigned int i = 0; i < entityvector.size(); i++) {
+                    printf("Test\n");
+                    if (entityvector[i]->getName() != entity->getName()){
+                        printf("TEST2\n");
+                        if (entity->test_collide(entityvector[i], -50, 0)){
+                            printf("collision\n");
+                        }
+                        else {
+                            printf("miss\n");
+                        }
+                    }
+                }
+            }
+        }
+
+
+        entity->move(0, 0,isJumping1); // actualisation of the entity
+        entity2->move(0,0);
+>>>>>>> Stashed changes
 
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
@@ -124,8 +190,18 @@ void Window::display() {
             sprite->animate(0, flip); // Animate the first row of the sprite sheet
             entity->display(); // Render the sprite to the renderer
         }
+<<<<<<< Updated upstream
 
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
+=======
+        Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
+        if (sprite2 != nullptr) {
+            sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
+            entity2->display(); // Render the sprite to the renderer
+        }
+        SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
+        std::this_thread::sleep_for(std::chrono::milliseconds(15));
+>>>>>>> Stashed changes
     }
 }

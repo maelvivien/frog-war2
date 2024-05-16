@@ -21,7 +21,8 @@ public:
     int getWidth();
     int getHeight();
     bool test_collide(Entity* test, int dx, int dy);
-    void move(int dx, int dy) override;
+    void move(int dx, int dy, bool jump = true) override;
+   
 
 private:
     int _frameWidth, _frameHeight;

@@ -85,6 +85,7 @@ void Sprite::animate(int row, bool flip) {
     SDL_RenderCopyEx(_renderer, _texture, &srcRect, &dstRect, 0, NULL, _flipType);
 }
 
+<<<<<<< Updated upstream
 void Sprite::move(int dx, int dy) {
         // Avoid going out of the window
     if (_x + dx < 0) {
@@ -126,6 +127,12 @@ void Sprite::move(int dx, int dy) {
             }
         }
     }
+=======
+void Sprite::move(int dx, int dy, bool jump) {
+        // lateral movement
+    if(_x < 0) _x=0;
+    if(_x > 1920 - _width) _x = 1920 - _width;
+>>>>>>> Stashed changes
 
     
 
@@ -188,6 +195,7 @@ for (Entity* other : *_collisionVector) {
             }
         }
     }
+<<<<<<< Updated upstream
 }
 
 if (!onGround) {
@@ -196,6 +204,19 @@ if (!onGround) {
 if(dy == 1)_y+=1;
 
 _x += xspeed;*/
+=======
+    if (!onGround) {
+        _y += yspeed; // Apply gravity       
+    }
+    else if(!jump){
+        jumpTime = 0;
+        
+    } 
+
+    _x += xspeed;
+    std::cout << "_x: " << _x << ", _y: " << _y << std::endl;
+    //std::cout << "jumpTime: " << jumpTime << std::endl;
+>>>>>>> Stashed changes
 }
 
 std::string& Sprite::getName(){
