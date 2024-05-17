@@ -55,7 +55,9 @@ void Window::window_init(){
         //collisionvector.push_back(plateform1);
         //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
         //collisionvector.push_back(plateform2);
-        Sprite * collision = new Sprite(renderer, 0, 800, 1920, 120);
+        Sprite * collision = new Sprite(renderer, 0, 800, 2000, 120);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1620, 700, 20, 120);
         collisionvector.push_back(collision);
         /*collision = new Sprite(renderer, 925, 775, 150, 220);
         collisionvector.push_back(collision);
@@ -186,6 +188,9 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect);
 
+        
+        
+
         if (flip) {
             SDL_Rect testrecthitbox = {entity->getX()-50, entity->getY(), entity->getWidth(), entity->getHeight()};
             SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
@@ -205,13 +210,13 @@ void Window::display() {
         Sprite* sprite = dynamic_cast<Sprite*>(entity);
         if (sprite != nullptr) {
             sprite->animate(0, flip); // Animate the first row of the sprite sheet
-            entity->display(); // Render the sprite to the renderer
+            entity->display(new_viewport_x); // Render the sprite to the renderer
         }
         if (entity2->getHealth()) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
             if (sprite2 != nullptr) {
                 sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
-                entity2->display(); // Render the sprite to the renderer
+                entity2->display(new_viewport_x); // Render the sprite to the renderer
             }
         }
         if (test && !entity2->getHealth()) {

@@ -13,7 +13,7 @@ public:
 
     static std::vector<Entity*>* _collisionvector;
     static void setCollisionVector(std::vector<Entity*>* collisionvector);
-    virtual void display() override;
+    void display(int camera_x) override;
     void animate(int row, bool flip = false);
     std::string& getName() override;
     bool test_collide(Entity* test, int dx, int dy);

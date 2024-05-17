@@ -11,7 +11,7 @@ class Entity {
 public:
     virtual ~Entity() = default;
 
-    virtual void display() = 0; // Pure virtual function
+    virtual void display(int camera_x) = 0; // Pure virtual function
     virtual void move(int dx, int dy,bool jump = false) = 0; // Declaration of the move function
     virtual int getX() = 0;
     virtual int getY() = 0;

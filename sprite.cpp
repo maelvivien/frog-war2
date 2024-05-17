@@ -46,7 +46,7 @@ Sprite::Sprite(SDL_Renderer* renderer, int x, int y, int width, int height) {
 Sprite::~Sprite() {
 }
 
-void Sprite::display() {
+void Sprite::display(int camera_x) {
     SDL_Rect srcRect;
     srcRect.x = (_currentFrame % _numColumns) * _frameWidth;
     srcRect.y = (_currentFrame / _numColumns) * _frameHeight;
@@ -54,7 +54,7 @@ void Sprite::display() {
     srcRect.h = _frameHeight;
 
     SDL_Rect dstRect;
-    dstRect.x = _x;
+    dstRect.x = _x ; //- camera_x;
     dstRect.y = _y;
     dstRect.w = _width;
     dstRect.h = _height;
