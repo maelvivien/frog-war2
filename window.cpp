@@ -287,3 +287,75 @@ void Window::display() {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
+
+void Window::displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, int displayDuration, int transitionDuration) {
+    SDL_Texture* texture1 = IMG_LoadTexture(renderer, imagePath1);
+    SDL_Texture* texture2 = IMG_LoadTexture(renderer, imagePath2);
+    SDL_Texture* texture3 = IMG_LoadTexture(renderer, imagePath3);
+
+    // Render and present the first image
+    SDL_RenderCopy(renderer, texture1, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
+    // Sleep the thread for displayDuration milliseconds
+    std::this_thread::sleep_for(std::chrono::milliseconds(displayDuration));
+
+    fadeTransition(texture1, texture2, transitionDuration);
+
+    // Render and present the second image
+    SDL_RenderCopy(renderer, texture2, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
+    // Sleep the thread for displayDuration milliseconds
+    std::this_thread::sleep_for(std::chrono::milliseconds(displayDuration));
+
+    fadeTransition(texture2, texture3, transitionDuration);
+
+    // Cleanup textures after use
+    SDL_DestroyTexture(texture1);
+    SDL_DestroyTexture(texture2);
+    SDL_DestroyTexture(texture3);
+}
+
+
+void Window::fadeTransition(SDL_Texture* startTexture, SDL_Texture* endTexture, int transitionDuration) {
+    const int FRAMES_PER_SECOND = 60;
+    const int FRAME_DURATION = 1000 / FRAMES_PER_SECOND; // Duration of each frame in milliseconds
+
+    SDL_SetTextureBlendMode(startTexture, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureBlendMode(endTexture, SDL_BLENDMODE_BLEND);
+
+    Uint32 startTime = SDL_GetTicks();
+    Uint32 endTime = startTime + transitionDuration;
+
+    while (SDL_GetTicks() < endTime) {
+        Uint32 now = SDL_GetTicks();
+        double progress = (double)(now - startTime) / (double)(transitionDuration);
+
+        // Clear the renderer
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        // Draw the start texture with decreasing alpha
+        SDL_SetTextureAlphaMod(startTexture, (1.0 - progress) * 255);
+        SDL_RenderCopy(renderer, startTexture, NULL, NULL);
+
+        // Draw the end texture with increasing alpha
+        SDL_SetTextureAlphaMod(endTexture, progress * 255);
+        SDL_RenderCopy(renderer, endTexture, NULL, NULL);
+
+        // Update the screen
+        SDL_RenderPresent(renderer);
+
+        // Delay to control the speed of the transition
+        if (transitionDuration > FRAME_DURATION) {
+            SDL_Delay(FRAME_DURATION);
+        } else {
+            SDL_Delay(transitionDuration);
+        }
+    }
+
+    // Reset the alpha mod of the textures
+    SDL_SetTextureAlphaMod(startTexture, 255);
+    SDL_SetTextureAlphaMod(endTexture, 255);
+}

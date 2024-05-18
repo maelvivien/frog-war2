@@ -16,6 +16,7 @@ public:
     void window_init();
     ~Window();
     void display();
+    void displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, int displayDuration, int transitionDuration);
 
 private:
     int width, height;
@@ -29,6 +30,7 @@ private:
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
     bool test = true;
+    void fadeTransition(SDL_Texture* startTexture, SDL_Texture* endTexture, int transitionDuration);
 };
 
 #endif // WINDOW_HPP
