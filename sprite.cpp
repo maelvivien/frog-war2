@@ -54,7 +54,7 @@ void Sprite::display() {
     srcRect.h = _frameHeight;
 
     SDL_Rect dstRect;
-    dstRect.x = _x;
+    dstRect.x = _x ; //- camera_x;
     dstRect.y = _y;
     dstRect.w = _width;
     dstRect.h = _height;
