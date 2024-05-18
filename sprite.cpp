@@ -46,7 +46,7 @@ Sprite::Sprite(SDL_Renderer* renderer, int x, int y, int width, int height) {
 Sprite::~Sprite() {
 }
 
-void Sprite::display(int camera_x) {
+void Sprite::display() {
     SDL_Rect srcRect;
     srcRect.x = (_currentFrame % _numColumns) * _frameWidth;
     srcRect.y = (_currentFrame / _numColumns) * _frameHeight;
@@ -54,7 +54,7 @@ void Sprite::display(int camera_x) {
     srcRect.h = _frameHeight;
 
     SDL_Rect dstRect;
-    dstRect.x = _x ; //- camera_x;
+    dstRect.x = _x;
     dstRect.y = _y;
     dstRect.w = _width;
     dstRect.h = _height;
@@ -148,18 +148,14 @@ void Sprite::move(int dx, int dy,bool jump) {
         }
     }
 
-        if (!onGround) {
-        _y += yspeed; // Apply gravity       
+    if (!onGround) {
+        _y += yspeed; // Apply gravity
     }
-    else if(!jump){
+     else if(!jump){
         jumpTime = 0;
-
-    } 
+    }
 
     _x += xspeed;
-    std::cout << "_x: " << _x << ", _y: " << _y << std::endl;
-    //std::cout << "jumpTime: " << jumpTime << std::endl;
-
 }
 
 void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
@@ -167,7 +163,7 @@ void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
         if (entityvector[i]->getName() != getName()){
             if (test_collide(entityvector[i], size, 0)){
                 printf("collision\n");
-                entityvector[i]->setHP(0);
+                entityvector[i]->setHP(entityvector[i]->getHealth()-damage);
             }
             else {
                 printf("miss\n");

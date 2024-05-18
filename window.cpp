@@ -4,9 +4,8 @@
 #include <chrono>
 #include <thread>
 
-// window.cpp
-    Window::Window(const std::string& image_path, int world_width, int world_height, int view_width, int view_height)
-    : view_width(view_width), view_height(view_height), image_path(image_path), viewport_x(0) {
+Window::Window(const std::string& image_path, int width, int height)
+    : width(width), height(height), image_path(image_path) {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_VIDEO) < 0) {
         printf("Error initializing the process\n");
@@ -16,23 +15,20 @@
         printf("Audio could not be initialized\n");
     }
 
-    window = SDL_CreateWindow("Frogwar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, view_width, view_height, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Window Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
     if (window == nullptr) {
-        // faudrait gerer les erreurs
+        // handle error
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr) {
-        //
+        // handle error
     }
-    
-    
 
     entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 200, 200, 300, 250, 10, 10);
     entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 300, 250, 100, 100, 16, 16);
-
+    
     window_init();
-   
 
 }
 
@@ -50,16 +46,14 @@ void Window::window_init(){
     entityvector.push_back(entity);
     if (entity2->getHealth()) entityvector.push_back(entity2);
 
-    if (image_path == "texture/grandbackground.png") {
+    if (image_path == "texture/background.png") {
         //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
         //collisionvector.push_back(plateform1);
         //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
         //collisionvector.push_back(plateform2);
-        Sprite * collision = new Sprite(renderer, 0, 800, 2000, 120);
+        Sprite * collision = new Sprite(renderer, 0, 900, 1920, 120);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1620, 700, 20, 120);
-        collisionvector.push_back(collision);
-        /*collision = new Sprite(renderer, 925, 775, 150, 220);
+        collision = new Sprite(renderer, 925, 775, 150, 220);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1075, 535, 220, 620);
         collisionvector.push_back(collision);
@@ -68,7 +62,7 @@ void Window::window_init(){
         collision = new Sprite(renderer, 1630, 0, 320, 185);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1900, 150, 120, 150);
-        collisionvector.push_back(collision);*/
+        collisionvector.push_back(collision);
         Sprite::setCollisionVector(&collisionvector);
         //gMusic = Mix_LoadMUS( "sound/music.ogg");
     }
@@ -102,6 +96,8 @@ void Window::display() {
     bool state = true;
     bool isJumping1 = false;
     bool isJumping2 = false;
+
+    int dx1, dy1, dx2, dy2;
     while (running) {
         
         while (SDL_PollEvent(&event)) {
@@ -110,19 +106,30 @@ void Window::display() {
             }
         }
 
+        dx1 = 0;
+        dy1 = 0;
         if (keyState[SDL_SCANCODE_UP]) {
-            entity->move(0, -1); // move up
+            dx1 = 0;
+            dy1 = -1;
             isJumping1 = true;
         }
         if (keyState[SDL_SCANCODE_DOWN]) {
-            entity->move(0, 1); // move down
+            dx1 = 0;
+            dy1 = 1;
         }
         if (keyState[SDL_SCANCODE_LEFT]) {
-            entity->move(-1, 0); // move left
+            dx1 = -1;
+            if (!keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
+                dy1 = 0;
+            }
             flip = true;
+            std::cout << "Test" << std::endl;
         }
         if (keyState[SDL_SCANCODE_RIGHT]) {
-            entity->move(1, 0); // move right
+            dx1 = 1;
+            if (!keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
+                dy1 = 0;
+            }
             flip = false;
         }
 
@@ -132,25 +139,35 @@ void Window::display() {
 
         ///////////////////////////////////////////////////////////////////////////
 
+        dx2 = 0;
+        dy2 = 0;
+
         if (keyState[SDL_SCANCODE_I]) {
-            entity2->move(0, -1); // move up
+            dx2 = 0;
+            dy2 = -1; // move up
             isJumping2 = true;
         }
         if (keyState[SDL_SCANCODE_K]) {
-            entity2->move(0, 1); // move down
+            dx2 = 0;
+            dy2 = 1; // move down
         }
         if (keyState[SDL_SCANCODE_J]) {
-            entity2->move(-1, 0); // move left
+            dx2 = -1; // move left
+            if (!keyState[SDL_SCANCODE_I] && !keyState[SDL_SCANCODE_K]) {
+                dy2 = 0;
+            }
             flip2 = true;
         }
         if (keyState[SDL_SCANCODE_L]) {
-            entity2->move(1, 0); // move right
+            dx2 = 1; // move right
+            if (!keyState[SDL_SCANCODE_I] && !keyState[SDL_SCANCODE_K]) {
+                dy2 = 0;
+            }
             flip2 = false;
         }
         if (!keyState[SDL_SCANCODE_I]) {
             isJumping2 = false;
         }
-
 
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -163,33 +180,23 @@ void Window::display() {
                 entity->attack(1,-50, entityvector);
             }
         }
-
-        entity->move(0, 0,isJumping1); // actualisation of the entity
-        entity2->move(0,0,isJumping2);
+        std::cout << "dx1: " << dx1 << ", dy1: " << dy1 << std::endl;
+        entity->move(dx1, dy1,isJumping1); // actualisation of the entity
+        entity2->move(dx2,dy2,isJumping2);
 
         SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
 
-        // Get the x-coordinate of the first sprite
-        int sprite_x = entity->getX();
-
-        // Calculate the new viewport x-coordinate
-        int new_viewport_x = sprite_x - view_width / 2;
-
-        // Ensure that the new viewport x-coordinate is within the bounds of the texture
-        new_viewport_x = std::max(0, std::min(new_viewport_x, 2692 - view_width));
-
-        // Render a part of the background
-        SDL_Rect srcRect = {new_viewport_x, 0, view_width, view_height}; // Set the source rectangle to the current
-        SDL_Rect destRect = {0, 0, view_width, view_height}; // Set the destination rectangle to the size of the window
-        SDL_RenderCopy(renderer, texture, &srcRect, &destRect); // Render the part of the texture that's in the viewport to the window
-
+        // Render the background
+        SDL_Rect backgroundRect;
+        backgroundRect.x = 0;
+        backgroundRect.y = 0;
+        backgroundRect.w = width;
+        backgroundRect.h = height;
+        SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
 
         SDL_Rect testrect = {entity->getX(), entity->getY(), entity->getWidth(), entity->getHeight()};
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect);
-
-        
-        
 
         if (flip) {
             SDL_Rect testrecthitbox = {entity->getX()-50, entity->getY(), entity->getWidth(), entity->getHeight()};
@@ -210,13 +217,13 @@ void Window::display() {
         Sprite* sprite = dynamic_cast<Sprite*>(entity);
         if (sprite != nullptr) {
             sprite->animate(0, flip); // Animate the first row of the sprite sheet
-            entity->display(new_viewport_x); // Render the sprite to the renderer
+            entity->display(); // Render the sprite to the renderer
         }
         if (entity2->getHealth()) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
             if (sprite2 != nullptr) {
                 sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
-                entity2->display(new_viewport_x); // Render the sprite to the renderer
+                entity2->display(); // Render the sprite to the renderer
             }
         }
         if (test && !entity2->getHealth()) {

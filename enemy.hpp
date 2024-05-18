@@ -1,15 +1,15 @@
-#ifndef SPRITE_HPP
-#define SPRITE_HPP
+#ifndef ENEMY_HPP
+#define ENEMY_HPP
 
 #include "entity.hpp"
 #include <vector> 
 
-class Sprite : public Entity {
+class Enemy : public Entity {
 public:
 
-    Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns);
-    Sprite(SDL_Renderer* renderer, int x, int y, int width, int height);
-    ~Sprite();
+    Enemy(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns);
+    Enemy(SDL_Renderer* renderer, int x, int y, int width, int height);
+    ~Enemy();
 
     static std::vector<Entity*>* _collisionvector;
     static void setCollisionVector(std::vector<Entity*>* collisionvector);
@@ -17,8 +17,7 @@ public:
     void animate(int row, bool flip = false);
     std::string& getName() override;
     bool test_collide(Entity* test, int dx, int dy);
-    void move(int dx, int dy, bool jump = true) override;
-    void attack(int damage, int size, std::vector<Entity*> entityvector);
+    void move(int dx, int dy) override;
     void setHP(int value);
     int getX();
     int getY();
@@ -27,7 +26,7 @@ public:
     int getHealth();
 
 private:
-    int _health = 3;
+    int _health;
     int _frameWidth, _frameHeight;
     int _numFrames, _numColumns;
     int _currentFrame;
@@ -35,4 +34,4 @@ private:
     SDL_RendererFlip _flipType; // New member variable to store the flip state
 };
 
-#endif // SPRITE_HPP
+#endif // ENEMY_HPP
