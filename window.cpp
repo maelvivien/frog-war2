@@ -25,8 +25,8 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 200, 200, 300, 250, 10, 10);
-    entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 300, 250, 100, 100, 16, 16);
+    entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 150, 150, 300, 250, 10, 10);
+    entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 200, 150, 100, 100, 16, 16);
     
     window_init();
 
@@ -47,6 +47,27 @@ void Window::window_init(){
     if (entity2->getHealth()) entityvector.push_back(entity2);
 
     if (image_path == "texture/background.png") {
+        //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
+        //collisionvector.push_back(plateform1);
+        //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
+        //collisionvector.push_back(plateform2);
+        Sprite * collision = new Sprite(renderer, 0, 900, 1920, 120);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 925, 775, 150, 220);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1075, 535, 220, 620);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1295, 655, 140, 220);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1630, 0, 320, 185);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1900, 150, 120, 150);
+        collisionvector.push_back(collision);
+        Sprite::setCollisionVector(&collisionvector);
+        //gMusic = Mix_LoadMUS( "sound/music.ogg");
+    }
+
+    if (image_path == "texture/map.png") {
         //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
         //collisionvector.push_back(plateform1);
         //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);

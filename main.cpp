@@ -2,7 +2,7 @@
 #include "window.hpp"
 
 int main() {
-    Window window("texture/background.png", 1920, 1080);
+    Window window("texture/map.png", 1920, 1080);
     window.display();
     return 0;
 }
