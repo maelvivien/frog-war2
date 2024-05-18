@@ -288,10 +288,11 @@ void Window::display() {
     }
 }
 
-void Window::displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, int displayDuration, int transitionDuration) {
+void Window::displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, const char* imagePath4, int displayDuration, int transitionDuration) {
     SDL_Texture* texture1 = IMG_LoadTexture(renderer, imagePath1);
     SDL_Texture* texture2 = IMG_LoadTexture(renderer, imagePath2);
     SDL_Texture* texture3 = IMG_LoadTexture(renderer, imagePath3);
+    SDL_Texture* texture4 = IMG_LoadTexture(renderer, imagePath4);
 
     // Render and present the first image
     SDL_RenderCopy(renderer, texture1, NULL, NULL);
@@ -311,10 +312,24 @@ void Window::displayImagesWithTransition(const char* imagePath1, const char* ima
 
     fadeTransition(texture2, texture3, transitionDuration);
 
+    // Render and present the third image
+    SDL_RenderCopy(renderer, texture3, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
+    // Sleep the thread for displayDuration milliseconds
+    std::this_thread::sleep_for(std::chrono::milliseconds(displayDuration));
+
+    fadeTransition(texture3, texture4, transitionDuration);
+
+    // Render and present the fourth image
+    SDL_RenderCopy(renderer, texture4, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
     // Cleanup textures after use
     SDL_DestroyTexture(texture1);
     SDL_DestroyTexture(texture2);
     SDL_DestroyTexture(texture3);
+    SDL_DestroyTexture(texture4);
 }
 
 
@@ -358,4 +373,42 @@ void Window::fadeTransition(SDL_Texture* startTexture, SDL_Texture* endTexture, 
     // Reset the alpha mod of the textures
     SDL_SetTextureAlphaMod(startTexture, 255);
     SDL_SetTextureAlphaMod(endTexture, 255);
+}
+
+int Window::menu(const char* backgroundImagePath) {
+    SDL_Texture* backgroundTexture = IMG_LoadTexture(renderer, backgroundImagePath);
+
+    SDL_Rect buttonRect;
+    buttonRect.x = 700; // Set the x position of the button
+    buttonRect.y = 400; // Set the y position of the button
+    buttonRect.w = 600; // Set the width of the button
+    buttonRect.h = 100;  // Set the height of the button
+
+    SDL_Event event;
+    bool running = true;
+
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = false;
+            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX, mouseY;
+                SDL_GetMouseState(&mouseX, &mouseY);
+
+                if (SDL_PointInRect(new SDL_Point{mouseX, mouseY}, &buttonRect)) {
+                    // The button area was clicked, return 0 to start the game
+                    return 0;
+                }
+            }
+        }
+
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL); // Render the background
+        SDL_RenderPresent(renderer); // Update the screen
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    SDL_DestroyTexture(backgroundTexture);
+
+    return 1;
 }
