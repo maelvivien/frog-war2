@@ -122,7 +122,7 @@ void Sprite::move(int dx, int dy,bool jump) {
     bool isColliding = false;
     bool onGround = false;
 
-    for (Entity* other : *_collisionvector) {
+    for (auto& other : *_collisionvector) {
         if (other != this) {
             // Check for horizontal collision
             if (xspeed != 0 && this->test_collide(other, xspeed, 0)) {
