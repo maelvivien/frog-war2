@@ -59,6 +59,8 @@ void Window::window_init(){
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1620, 700, 20, 120);
         collisionvector.push_back(collision);
+         collision = new Sprite(renderer, 1000, 500, 20, 300);
+        collisionvector.push_back(collision);
         /*collision = new Sprite(renderer, 925, 775, 150, 220);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 1075, 535, 220, 620);
@@ -189,7 +191,6 @@ void Window::display() {
         SDL_RenderDrawRect(renderer, &testrect);
 
         
-        
 
         if (flip) {
             SDL_Rect testrecthitbox = {entity->getX()-50, entity->getY(), entity->getWidth(), entity->getHeight()};
@@ -208,22 +209,28 @@ void Window::display() {
 
         // Animate and display the sprite
         Sprite* sprite = dynamic_cast<Sprite*>(entity);
-        if (sprite != nullptr) {
-            sprite->animate(0, flip); // Animate the first row of the sprite sheet
-            entity->display(new_viewport_x); // Render the sprite to the renderer
+    if (sprite != nullptr) {
+        sprite->animate(0, flip);
+        int render_x = sprite->getX() - new_viewport_x;
+        sprite->display(render_x);
+    }
+
+    if (entity2->getHealth()) {
+        Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
+        if (sprite2 != nullptr) {
+            sprite2->animate(0, flip2);
+            int render_x = sprite2->getX() - new_viewport_x;
+            sprite2->display(render_x);
         }
-        if (entity2->getHealth()) {
-            Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
-            if (sprite2 != nullptr) {
-                sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
-                entity2->display(new_viewport_x); // Render the sprite to the renderer
-            }
-        }
-        if (test && !entity2->getHealth()) {
-            window_init();
-            test = false;
-        }
-        SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
+    }
+
+    if (test && !entity2->getHealth()) {
+        window_init();
+        test = false;
+    }
+
+    // Update the screen with any rendering performed since the previous call
+    SDL_RenderPresent(renderer);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
