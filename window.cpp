@@ -24,9 +24,10 @@ Window::Window(const std::string& image_path, int width, int height)
     if (renderer == nullptr) {
         // handle error
     }
-
-    entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 100, 100, 300, 250, 10, 10);
-    entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 150, 100, 100, 100, 16, 16);
+    entity2 = new Sprite(renderer, "test1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
+    entity = new Sprite(renderer, "test2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
+    //entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 100, 100, 300, 250, 10, 10);
+    //entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 150, 100, 100, 100, 16, 16,1);
     
     window_init();
 
@@ -80,16 +81,25 @@ void Window::window_init(){
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 450, 900, 50, 100);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 695, 840, 140, 40);
+        collision = new Sprite(renderer, 695, 840, 140, 20);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 320, 505, 130, 40);
+        collision = new Sprite(renderer, 320, 505, 130, 20);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 90, 755, 140, 40);
+        collision = new Sprite(renderer, 90, 755, 140, 20);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 880, 690, 140, 40);
+        collision = new Sprite(renderer, 880, 680, 140, 20);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 870, 370, 160, 20);
         collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1170, 745, 170, 20);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1320, 570, 140, 20);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1570, 350, 170, 20);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 1715, 870, 140, 20);
+        collisionvector.push_back(collision);
+
         Sprite::setCollisionVector(&collisionvector);
         //gMusic = Mix_LoadMUS( "sound/music.ogg");
     }
@@ -123,7 +133,8 @@ void Window::display() {
     bool state = true;
     bool isJumping1 = false;
     bool isJumping2 = false;
-
+    int action1 = 0;
+    int action2 = 0;
     int dx1, dy1, dx2, dy2;
     while (running) {
         
@@ -252,14 +263,19 @@ void Window::display() {
 
         // Animate and display the sprite
         Sprite* sprite = dynamic_cast<Sprite*>(entity);
+        if(isJumping1)action1 = 1;
+        else action1 = 0;
+        
+        if(isJumping2)action2 = 1;
+        else action2 = 0;
         if (sprite != nullptr) {
-            sprite->animate(0, flip); // Animate the first row of the sprite sheet
+            sprite->animate(action1, flip); // Animate the first row of the sprite sheet
             entity->display(); // Render the sprite to the renderer
         }
         if (entity2->getHealth()) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
             if (sprite2 != nullptr) {
-                sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
+                sprite2->animate(action2, flip2); // Animate the first row of the sprite sheet
                 entity2->display(); // Render the sprite to the renderer
             }
         }

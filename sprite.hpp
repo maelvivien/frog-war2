@@ -7,7 +7,7 @@
 class Sprite : public Entity {
 public:
 
-    Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns);
+    Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows);
     Sprite(SDL_Renderer* renderer, int x, int y, int width, int height);
     ~Sprite();
 
@@ -29,8 +29,8 @@ public:
 private:
     int _health = 3;
     int _frameWidth, _frameHeight;
-    int _numFrames, _numColumns;
-    int _currentFrame;
+    int _numFrames, _numColumns,_numRows;
+    int _currentFrame,_currentRow;
     Uint32 _frameTime, _lastFrameTime;
     SDL_RendererFlip _flipType; // New member variable to store the flip state
 };
