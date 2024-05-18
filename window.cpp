@@ -25,8 +25,8 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 150, 150, 300, 250, 10, 10);
-    entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 200, 150, 100, 100, 16, 16);
+    entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 100, 100, 300, 250, 10, 10);
+    entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 150, 100, 100, 100, 16, 16);
     
     window_init();
 
@@ -72,17 +72,23 @@ void Window::window_init(){
         //collisionvector.push_back(plateform1);
         //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
         //collisionvector.push_back(plateform2);
-        Sprite * collision = new Sprite(renderer, 0, 900, 1920, 120);
+        Sprite * collision = new Sprite(renderer, 0, 1000, 1920, 120);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 925, 775, 150, 220);
+        collision = new Sprite(renderer, 275, 950, 50, 100);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1075, 535, 220, 620);
+        collision = new Sprite(renderer, 320, 860, 130, 100);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1295, 655, 140, 220);
+        collision = new Sprite(renderer, 450, 900, 50, 100);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1630, 0, 320, 185);
+        collision = new Sprite(renderer, 695, 840, 140, 40);
         collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1900, 150, 120, 150);
+        collision = new Sprite(renderer, 320, 505, 130, 40);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 90, 755, 140, 40);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 880, 690, 140, 40);
+        collisionvector.push_back(collision);
+        collision = new Sprite(renderer, 870, 370, 160, 20);
         collisionvector.push_back(collision);
         Sprite::setCollisionVector(&collisionvector);
         //gMusic = Mix_LoadMUS( "sound/music.ogg");
@@ -214,6 +220,16 @@ void Window::display() {
         backgroundRect.w = width;
         backgroundRect.h = height;
         SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
+
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Set the draw color to red
+        for (long unsigned int i = 0; i < collisionvector.size(); i++){
+            SDL_Rect rect;
+            rect.x = collisionvector[i]->getX();
+            rect.y = collisionvector[i]->getY();
+            rect.w = collisionvector[i]->getWidth();
+            rect.h = collisionvector[i]->getHeight();
+            SDL_RenderDrawRect(renderer, &rect);
+        }
 
         SDL_Rect testrect = {entity->getX(), entity->getY(), entity->getWidth(), entity->getHeight()};
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);

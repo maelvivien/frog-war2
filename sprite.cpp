@@ -156,6 +156,7 @@ void Sprite::move(int dx, int dy,bool jump) {
     }
 
     _x += xspeed;
+    std::cout << "_x: " << _x << ", _y: " << _y << std::endl;
 }
 
 void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
