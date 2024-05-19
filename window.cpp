@@ -24,8 +24,8 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    player2 = new Player(renderer, "test1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
-    player = new Player(renderer, "test2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
+    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
+    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
     
     window_init();
 
@@ -85,10 +85,11 @@ void Window::window_init(){
 }
 
 Window::~Window() {
-    delete player;
-    delete player2;
+    for (long unsigned int i = 0; i < entityvector.size(); i++){
+        entityvector.erase(entityvector.begin());
+    }
     for (long unsigned int i = 0; i < collisionvector.size(); i++){
-        delete collisionvector[i];
+        collisionvector.erase(collisionvector.begin());
     }
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
@@ -104,13 +105,11 @@ void Window::display() {
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
     bool flip = false; // Handle the direction of the sprite
     bool flip2 = false;// False if sprite is toward the right
-    
+    bool sensattack = false;
     bool state = true;
-    bool isJumping1 = false;
-    bool isJumping2 = false;
-    int action1 = 0;
-    int action2 = 0;
-    int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+    bool isJumping = false;
+    int action = 0;
+    int dx = 0, dy = 0;
     Timer attackCooldown = Timer();
     while (running) {
 
@@ -132,50 +131,53 @@ void Window::display() {
         }
 
         if (keyState[SDL_SCANCODE_ESCAPE]) {
+            std::cout << player->getHealth() << " / " << player2->getHealth() << std::endl;
             running = false;
         }
 
         // Player 1
-        dx1 = 0;
-        dy1 = 0;
+        dx = 0;
+        dy = 0;
+        isJumping = false;
 
         if (keyState[SDL_SCANCODE_UP]) {
-            dx1 = 0;
-            dy1 = -1;
-            isJumping1 = true;
+            dx = 0;
+            dy = -1;
+            isJumping = true;
         }
         if (keyState[SDL_SCANCODE_DOWN]) {
-            dx1 = 0;
-            dy1 = 1;
+            dx = 0;
+            dy = 1;
         }
         if (keyState[SDL_SCANCODE_LEFT]) {
-            dx1 = -1;
+            dx = -1;
             if (!keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
-                dy1 = 0;
+                dy = 0;
             }
             flip = true;
         }
         if (keyState[SDL_SCANCODE_RIGHT]) {
-            dx1 = 1;
+            dx = 1;
             if (!keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
-                dy1 = 0;
+                dy = 0;
             }
             flip = false;
         }
 
         if (!keyState[SDL_SCANCODE_UP]) {
-            isJumping1 = false;
+            isJumping = false;
         }
 
         if (keyState[SDL_SCANCODE_Q]) {
             if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 5000) {   
 
-                if (!flip) { // Turned toward the right side of the screen
-                    player->attack(1,50, entityvector);
-                }
-                else {
-                    player->attack(1,-50, entityvector);
-                }
+                int sens = flip ? -1 : 1;
+                std::string test = "Player2";
+                AttackSprite* fireball = AttackSprite::createFireball(renderer, player->getX(), player->getY(), sens, 0, test);
+
+                // Add the fireball to the list of entities
+                entityvector.push_back(fireball);
+                sensattack = flip;
                 if (!attackCooldown.isStarted()) attackCooldown.start();
                 else {
                     // Reset the timer and make it run again from 0
@@ -185,18 +187,17 @@ void Window::display() {
             }
         }
 
-
-        player->move(dx1, dy1, isJumping1); // actualisation of the player
+        player->move(dx, dy, isJumping); // actualisation of the player
 
         // Animate and display the sprite
-        if (isJumping1) action1 = 1;
-        else action1 = 0;
+        if (isJumping) action = 1;
+        else action = 0;
 
 
         if (player->getHealth() > 0) {
             Sprite* sprite = dynamic_cast<Sprite*>(player);
             if (sprite != nullptr) {
-                sprite->animate(action1, flip); // Animate the first row of the sprite sheet
+                sprite->animate(action, flip); // Animate the first row of the sprite sheet
                 player->display(); // Render the sprite to the renderer
             }
         }
@@ -210,34 +211,36 @@ void Window::display() {
         /////////////////////////////////////////////////////////////////////////////
         // Player 2
 
-        dx2 = 0;
-        dy2 = 0;
+        action = 0;
+        isJumping = false;
+        dx = 0;
+        dy = 0;
 
         if (keyState[SDL_SCANCODE_I]) {
-            dx2 = 0;
-            dy2 = -1; // move up
-            isJumping2 = true;
+            dx = 0;
+            dy = -1; // move up
+            isJumping = true;
         }
         if (keyState[SDL_SCANCODE_K]) {
-            dx2 = 0;
-            dy2 = 1; // move down
+            dx = 0;
+            dy = 1; // move down
         }
         if (keyState[SDL_SCANCODE_J]) {
-            dx2 = -1; // move left
+            dx = -1; // move left
             if (!keyState[SDL_SCANCODE_I] && !keyState[SDL_SCANCODE_K]) {
-                dy2 = 0;
+                dy = 0;
             }
             flip2 = true;
         }
         if (keyState[SDL_SCANCODE_L]) {
-            dx2 = 1; // move right
+            dx = 1; // move right
             if (!keyState[SDL_SCANCODE_I] && !keyState[SDL_SCANCODE_K]) {
-                dy2 = 0;
+                dy = 0;
             }
             flip2 = false;
         }
         if (!keyState[SDL_SCANCODE_I]) {
-            isJumping2 = false;
+            isJumping = false;
         }
 
         /*if (keyState[SDL_SCANCODE_Q]) {
@@ -250,15 +253,15 @@ void Window::display() {
             }
         }*/
 
-        player2->move(dx2, dy2, isJumping2);
+        player2->move(dx, dy, isJumping);
 
-        if(isJumping2)action2 = 1;
-        else action2 = 0;
+        if(isJumping)action = 1;
+        else action = 0;
 
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
-                sprite2->animate(action2, flip2); // Animate the first row of the sprite sheet
+                sprite2->animate(action, flip2); // Animate the first row of the sprite sheet
                 player2->display(); // Render the sprite to the renderer
             }
         }
@@ -288,8 +291,18 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
         */
-        player->displayHealth(5,player2->getHealth());
-        //player->displayHealth(2, player2->getHealth());
+
+        for (Entity* entity : entityvector) {
+            AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
+            if (attack != nullptr) {
+                // Update the movement of Attacks sprites
+                attack->move(0, 0);
+                attack->update(entityvector); 
+                attack->animate(0, sensattack); // Animate the first row of the sprite sheet
+                attack->display(); // Render the sprite to the renderer
+            }
+        }
+
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -412,7 +425,7 @@ int Window::menu(const char* backgroundImagePath) {
         SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL); // Render the background
         SDL_RenderPresent(renderer); // Update the screen
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(8));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     SDL_DestroyTexture(backgroundTexture);

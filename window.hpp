@@ -8,6 +8,7 @@
 #include "enemy.hpp"
 #include "player.hpp"
 #include "timer.hpp"
+#include "attacksprite.hpp"
 #include <vector>
 #include <SDL2/SDL_mixer.h>
 #include <iostream>

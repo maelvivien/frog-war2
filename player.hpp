@@ -13,12 +13,7 @@ public:
     ~Player() override;
 
     void gotHit(int damage);
-    SDL_Texture* heartTexture;
-    SDL_Texture* player1Texture;
-    SDL_Texture* player2Texture;
-    SDL_Texture* blueHeartTexture;
-    SDL_Texture* greenHeartTexture;
-    void displayHealth(int pv1, int pv2);
+
 private:
     Timer _invulnerabiltyFrames;
     //int _health = 3;
