@@ -175,9 +175,10 @@ void Window::display() {
                 int sens = flip ? -1 : 1;
                 std::string test = "Player2";
                 AttackSprite* fireball = AttackSprite::createFireball(renderer, player->getX(), player->getY(), sens, 0, test);
-
+                AttackSprite* sword = AttackSprite::createSword(renderer, player->getX(), player->getY(), test);
                 // Add the fireball to the list of entities
                 entityvector.push_back(fireball);
+                entityvector.push_back(sword);
                 sensattack = flip;
                 if (!attackCooldown.isStarted()) attackCooldown.start();
                 else {
@@ -308,7 +309,8 @@ void Window::display() {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
             if (attack != nullptr) {
                 // Update the movement of Attacks sprites
-                attack->move(0, 0);
+                attack->move(0, 0); 
+                
                 attack->update(entityvector); 
                 attack->animate(0, sensattack); // Animate the first row of the sprite sheet
                 attack->display(); // Render the sprite to the renderer

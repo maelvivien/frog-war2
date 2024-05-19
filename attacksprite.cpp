@@ -10,10 +10,23 @@ AttackSprite* AttackSprite::createFireball(SDL_Renderer* renderer, int x, int y,
     const std::string imagePath = "texture/fireball.png";
     const int w = 100, h = 100, frameW = 150, frameH = 110;
     const int numFrames = 6, numCols = 6, numRows = 1;
-    const int attackType = 1, damage = 1;
+    const int attackType = 1, damage = 2;
     AttackSprite* fireball = new AttackSprite(renderer, name, imagePath, x, y, w, h, frameW, frameH, numFrames, numCols, numRows);
     fireball->setFx(fx); // Set fx
     fireball->setFy(fy); // Set fy
+    fireball->setOwner(owner);
+    fireball->setDamage(damage);
+    
+    return fireball;
+}
+
+AttackSprite* AttackSprite::createSword(SDL_Renderer* renderer, int x, int y, std::string owner) {
+    const std::string& name = "sword";
+    const std::string imagePath = "texture/sword.png";
+    const int w = 100, h = 100, frameW = 110, frameH = 100;
+    const int numFrames = 5, numCols = 5, numRows = 1;
+    const int attackType = 1, damage = 1;
+    AttackSprite* fireball = new AttackSprite(renderer, name, imagePath, x, y, w, h, frameW, frameH, numFrames, numCols, numRows);
     fireball->setOwner(owner);
     fireball->setDamage(damage);
     
@@ -25,6 +38,10 @@ void AttackSprite::move(int dx, int dy) {
     if (this->getName() == "fireball") {
         this->_x += this->getFx()*2;
         this->_y += this->getFy()*2;
+    }
+    else if (this->getName() == "sword") {
+        this->_x += dx;
+        this->_y += dy;
     }
 }
 
