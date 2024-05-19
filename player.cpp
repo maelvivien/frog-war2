@@ -3,9 +3,32 @@
 
 Player::Player(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows)
     : Sprite(renderer, name, image_path, x, y, width, height, frameWidth, frameHeight, numFrames, numColumns, numRows) {
+    
+    
+    SDL_Surface* player1 = IMG_Load("texture/player1.png");
+    player1Texture = SDL_CreateTextureFromSurface(_renderer, player1);
+    SDL_FreeSurface(player1);
+
+    SDL_Surface* player2 = IMG_Load("texture/player2.png");
+    player2Texture = SDL_CreateTextureFromSurface(_renderer, player2);
+    SDL_FreeSurface(player2);
+
+    SDL_Surface* blueHeart = IMG_Load("texture/coeurbleu.png");
+    blueHeartTexture = SDL_CreateTextureFromSurface(_renderer, blueHeart);
+    SDL_FreeSurface(blueHeart);
+
+    SDL_Surface* greenHeart = IMG_Load("texture/coeurvert.png");
+    greenHeartTexture = SDL_CreateTextureFromSurface(_renderer, greenHeart);
+    SDL_FreeSurface(greenHeart);
+    
+    
     }
 
 Player::~Player() {
+    SDL_DestroyTexture(player1Texture);
+    SDL_DestroyTexture(player2Texture);
+    SDL_DestroyTexture(blueHeartTexture);
+    SDL_DestroyTexture(greenHeartTexture);
 }
 
 
@@ -19,35 +42,6 @@ void Player::gotHit(int damage) {
 }
 
 void Player::displayHealth(int pv1, int pv2) {
-
-    
-    // je n'ai pas reussi à optimiser l'ouverture des textures ducoup on les réouvres à chaque fois
-    SDL_Surface* player1 = IMG_Load("texture/player1.png");
-    player1Texture = SDL_CreateTextureFromSurface(_renderer, player1);
-    SDL_FreeSurface(player1);
-
-
-
-    SDL_Surface* player2 = IMG_Load("texture/player2.png");
-    player2Texture = SDL_CreateTextureFromSurface(_renderer, player2);
-    SDL_FreeSurface(player2);
-
-
-
-    SDL_Surface* blueHeart = IMG_Load("texture/coeurbleu.png");
-    blueHeartTexture = SDL_CreateTextureFromSurface(_renderer, blueHeart);
-    SDL_FreeSurface(blueHeart);
-
-
-
-    SDL_Surface* greenHeart = IMG_Load("texture/coeurvert.png");
-    greenHeartTexture = SDL_CreateTextureFromSurface(_renderer, greenHeart);
-    SDL_FreeSurface(greenHeart);
-
-
-    // Print a test in the terminal
-    std::cout << "test" << std::endl;
-    // Set the position and size of the player 1 texture
     // Render the player 1 texture
     if (player1Texture) {
         SDL_Rect player1Dst = {70, 20, 170, 50};

@@ -111,6 +111,7 @@ void Window::display() {
     int action = 0;
     int dx = 0, dy = 0;
     Timer attackCooldown = Timer();
+    Timer heartDisplayCoolDown = Timer();
     while (running) {
 
 
@@ -291,7 +292,17 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
         */
-       player->displayHealth(5,player2->getHealth());
+       if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)){
+
+        player->displayHealth(5,player2->getHealth());
+        if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
+                else {
+                    // Reset the timer and make it run again from 0
+                    heartDisplayCoolDown.stop();
+                    heartDisplayCoolDown.start();
+                }
+
+       }
 
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
@@ -305,7 +316,7 @@ void Window::display() {
         }
 
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
 }
 
