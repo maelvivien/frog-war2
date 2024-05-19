@@ -24,8 +24,8 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
-    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
+    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7,3);
+    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 21, 7,3);
     
     window_init();
 
@@ -198,7 +198,7 @@ void Window::display() {
         if (player->getHealth() > 0) {
             Sprite* sprite = dynamic_cast<Sprite*>(player);
             if (sprite != nullptr) {
-                sprite->animate(action, flip); // Animate the first row of the sprite sheet
+                sprite->animate(2, flip); // Animate the first row of the sprite sheet
                 player->display(); // Render the sprite to the renderer
             }
         }
@@ -262,7 +262,7 @@ void Window::display() {
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
-                sprite2->animate(action, flip2); // Animate the first row of the sprite sheet
+                sprite2->animate(2, flip2); // Animate the first row of the sprite sheet
                 player2->display(); // Render the sprite to the renderer
             }
         }
