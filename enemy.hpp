@@ -1,37 +1,18 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
 
-#include "entity.hpp"
-#include <vector> 
+#include "sprite.hpp"
+#include <vector>
+#include <iostream> 
 
-class Enemy : public Entity {
+class Enemy : public Sprite {
 public:
+    Enemy(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows);
+    ~Enemy() override;
 
-    Enemy(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns);
-    Enemy(SDL_Renderer* renderer, int x, int y, int width, int height);
-    ~Enemy();
-
-    static std::vector<Entity*>* _collisionvector;
-    static void setCollisionVector(std::vector<Entity*>* collisionvector);
-    virtual void display() override;
-    void animate(int row, bool flip = false);
-    std::string& getName() override;
-    bool test_collide(Entity* test, int dx, int dy);
-    void move(int dx, int dy) override;
-    void setHP(int value);
-    int getX();
-    int getY();
-    int getWidth();
-    int getHeight();
-    int getHealth();
-
+    void move(int dx, int dy);
 private:
-    int _health;
-    int _frameWidth, _frameHeight;
-    int _numFrames, _numColumns;
-    int _currentFrame;
-    Uint32 _frameTime, _lastFrameTime;
-    SDL_RendererFlip _flipType; // New member variable to store the flip state
+
 };
 
 #endif // ENEMY_HPP

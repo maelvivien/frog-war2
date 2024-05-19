@@ -51,17 +51,17 @@ Sprite::~Sprite() {
 void Sprite::display() {
     SDL_Rect srcRect;
     srcRect.x = (_currentFrame % _numColumns) * _frameWidth;
-    srcRect.y = (_currentRow % _numRows) * _frameHeight;
+    srcRect.y = (_currentFrame / _numColumns) * _frameHeight;
     srcRect.w = _frameWidth;
     srcRect.h = _frameHeight;
 
     SDL_Rect dstRect;
-    dstRect.x = _x ; //- camera_x;
+    dstRect.x = _x;
     dstRect.y = _y;
     dstRect.w = _width;
     dstRect.h = _height;
 
-    SDL_RenderCopyEx(_renderer, _texture, &srcRect, &dstRect, 0, NULL, _flipType); 
+    SDL_RenderCopyEx(_renderer, _texture, &srcRect, &dstRect, 0, NULL, _flipType); // Use SDL_RenderCopyEx and flipType
 }
 
 void Sprite::animate(int row, bool flip) {
@@ -89,7 +89,7 @@ void Sprite::animate(int row, bool flip) {
     SDL_RenderCopyEx(_renderer, _texture, &srcRect, &dstRect, 0, NULL, _flipType);
 }
 
-void Sprite::move(int dx, int dy,bool jump) {
+void Sprite::move(int dx, int dy, bool jump) {
         // lateral movement
     if(_x < 0) _x=0;
     if(_x > 1920 - _width) _x = 1920 - _width;
@@ -168,7 +168,7 @@ void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
         if (entityvector[i]->getName() != getName()){
             if (test_collide(entityvector[i], size, 0)){
                 printf("collision\n");
-                entityvector[i]->setHP(entityvector[i]->getHealth()-damage);
+                entityvector[i]->gotHit(damage);
             }
             else {
                 printf("miss\n");
@@ -177,7 +177,7 @@ void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
     }
 }
 
-void Sprite::setHP(int value) {
+void Sprite::setHealth(int value) {
     _health = value;
 }
 
@@ -210,3 +210,5 @@ bool Sprite::test_collide(Entity* test, int dx, int dy){
         && (getY() + getHeight() + dy > test->getY() && getY() + dy < test->getY() + test->getHeight())) return true;
     return false;
 }
+
+void Sprite::gotHit(int damage){}

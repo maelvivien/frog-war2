@@ -1,6 +1,5 @@
 // window.cpp
 #include "window.hpp"
-#include "sprite.hpp"
 #include <chrono>
 #include <thread>
 
@@ -24,10 +23,9 @@ Window::Window(const std::string& image_path, int width, int height)
     if (renderer == nullptr) {
         // handle error
     }
-    entity2 = new Sprite(renderer, "test1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
-    entity = new Sprite(renderer, "test2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
-    //entity2 = new Sprite(renderer, "test1", "texture/frog2.png", 100, 100, 100, 100, 300, 250, 10, 10);
-    //entity = new Sprite(renderer, "test2", "texture/frogknight3.png", 850, 100, 150, 100, 100, 100, 16, 16,1);
+
+    player2 = new Player(renderer, "test1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
+    player = new Player(renderer, "test2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
     
     window_init();
 
@@ -39,40 +37,17 @@ void Window::window_init(){
     SDL_FreeSurface(image);
     collisionvector.clear();
     entityvector.clear();
-    collisionvector.push_back(entity);
-    if (entity2->getHealth()) {
-        printf("Test\n");
-        collisionvector.push_back(entity2);
+    collisionvector.push_back(player);
+    if (player->getHealth()) {
+        collisionvector.push_back(player);
     }
-    entityvector.push_back(entity);
-    if (entity2->getHealth()) entityvector.push_back(entity2);
-
-    if (image_path == "texture/background.png") {
-        //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
-        //collisionvector.push_back(plateform1);
-        //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
-        //collisionvector.push_back(plateform2);
-        Sprite * collision = new Sprite(renderer, 0, 900, 1920, 120);
-        collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 925, 775, 150, 220);
-        collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1075, 535, 220, 620);
-        collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1295, 655, 140, 220);
-        collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1630, 0, 320, 185);
-        collisionvector.push_back(collision);
-        collision = new Sprite(renderer, 1900, 150, 120, 150);
-        collisionvector.push_back(collision);
-        Sprite::setCollisionVector(&collisionvector);
-        //gMusic = Mix_LoadMUS( "sound/music.ogg");
+    if (player2->getHealth()) {
+        collisionvector.push_back(player2);
     }
+    if (player->getHealth()) entityvector.push_back(player);
+    if (player2->getHealth()) entityvector.push_back(player2);
 
     if (image_path == "texture/map.png") {
-        //Sprite* plateform1 = new Sprite(renderer, 0, 200, 500, 120);
-        //collisionvector.push_back(plateform1);
-        //Sprite* plateform2 = new Sprite(renderer, 1500, 900, 1920, 120);
-        //collisionvector.push_back(plateform2);
         Sprite * collision = new Sprite(renderer, 0, 1000, 1920, 120);
         collisionvector.push_back(collision);
         collision = new Sprite(renderer, 275, 950, 50, 100);
@@ -101,7 +76,6 @@ void Window::window_init(){
         collisionvector.push_back(collision);
 
         Sprite::setCollisionVector(&collisionvector);
-        //gMusic = Mix_LoadMUS( "sound/music.ogg");
     }
     //if (image_path == "texture/background2.png") {
     //    gMusic = Mix_LoadMUS( "sound/music2.ogg");
@@ -111,8 +85,8 @@ void Window::window_init(){
 }
 
 Window::~Window() {
-    delete entity;
-    delete entity2;
+    delete player;
+    delete player2;
     for (long unsigned int i = 0; i < collisionvector.size(); i++){
         delete collisionvector[i];
     }
@@ -129,14 +103,27 @@ void Window::display() {
 
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
     bool flip = false; // Handle the direction of the sprite
-    bool flip2 = false; // False if sprite is toward the right
+    bool flip2 = false;// False if sprite is toward the right
+    
     bool state = true;
     bool isJumping1 = false;
     bool isJumping2 = false;
     int action1 = 0;
     int action2 = 0;
-    int dx1, dy1, dx2, dy2;
+    int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+    Timer attackCooldown = Timer();
     while (running) {
+
+
+        SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
+
+        // Render the background
+        SDL_Rect backgroundRect;
+        backgroundRect.x = 0;
+        backgroundRect.y = 0;
+        backgroundRect.w = width;
+        backgroundRect.h = height;
+        SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
         
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -144,8 +131,14 @@ void Window::display() {
             }
         }
 
+        if (keyState[SDL_SCANCODE_ESCAPE]) {
+            running = false;
+        }
+
+        // Player 1
         dx1 = 0;
         dy1 = 0;
+
         if (keyState[SDL_SCANCODE_UP]) {
             dx1 = 0;
             dy1 = -1;
@@ -161,7 +154,6 @@ void Window::display() {
                 dy1 = 0;
             }
             flip = true;
-            std::cout << "Test" << std::endl;
         }
         if (keyState[SDL_SCANCODE_RIGHT]) {
             dx1 = 1;
@@ -175,7 +167,48 @@ void Window::display() {
             isJumping1 = false;
         }
 
-        ///////////////////////////////////////////////////////////////////////////
+        if (keyState[SDL_SCANCODE_Q]) {
+            if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 5000) {   
+
+                if (!flip) { // Turned toward the right side of the screen
+                    player->attack(1,50, entityvector);
+                }
+                else {
+                    player->attack(1,-50, entityvector);
+                }
+                if (!attackCooldown.isStarted()) attackCooldown.start();
+                else {
+                    // Reset the timer and make it run again from 0
+                    attackCooldown.stop();
+                    attackCooldown.start();
+                }
+            }
+        }
+
+
+        player->move(dx1, dy1, isJumping1); // actualisation of the player
+
+        // Animate and display the sprite
+        if (isJumping1) action1 = 1;
+        else action1 = 0;
+
+
+        if (player->getHealth() > 0) {
+            Sprite* sprite = dynamic_cast<Sprite*>(player);
+            if (sprite != nullptr) {
+                sprite->animate(action1, flip); // Animate the first row of the sprite sheet
+                player->display(); // Render the sprite to the renderer
+            }
+        }
+
+        if (test && player->getHealth() <= 0) {
+            window_init();
+            test = false;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////
+        // Player 2
 
         dx2 = 0;
         dy2 = 0;
@@ -207,82 +240,54 @@ void Window::display() {
             isJumping2 = false;
         }
 
-        /////////////////////////////////////////////////////////////////////////////////
-
-        if (keyState[SDL_SCANCODE_Q]) {
+        /*if (keyState[SDL_SCANCODE_Q]) {
             
             if (!flip) { // Turned toward the right side of the screen
-                entity->attack(1,50, entityvector);
+                player2->attack(1,50, entityvector);
             }
             else {
-                entity->attack(1,-50, entityvector);
+                player2->attack(1,-50, entityvector);
+            }
+        }*/
+
+        player2->move(dx2, dy2, isJumping2);
+
+        if(isJumping2)action2 = 1;
+        else action2 = 0;
+
+        if (player2->getHealth() > 0) {
+            Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
+            if (sprite2 != nullptr) {
+                sprite2->animate(action2, flip2); // Animate the first row of the sprite sheet
+                player2->display(); // Render the sprite to the renderer
             }
         }
-        std::cout << "dx1: " << dx1 << ", dy1: " << dy1 << std::endl;
-        entity->move(dx1, dy1,isJumping1); // actualisation of the entity
-        entity2->move(dx2,dy2,isJumping2);
 
-        SDL_RenderClear(renderer); // Clear the current rendering target with the drawing color
-
-        // Render the background
-        SDL_Rect backgroundRect;
-        backgroundRect.x = 0;
-        backgroundRect.y = 0;
-        backgroundRect.w = width;
-        backgroundRect.h = height;
-        SDL_RenderCopy(renderer, texture, NULL, &backgroundRect);
-
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Set the draw color to red
-        for (long unsigned int i = 0; i < collisionvector.size(); i++){
-            SDL_Rect rect;
-            rect.x = collisionvector[i]->getX();
-            rect.y = collisionvector[i]->getY();
-            rect.w = collisionvector[i]->getWidth();
-            rect.h = collisionvector[i]->getHeight();
-            SDL_RenderDrawRect(renderer, &rect);
+        if (test && player2->getHealth() <= 0) {
+            window_init();
+            test = false;
         }
 
-        SDL_Rect testrect = {entity->getX(), entity->getY(), entity->getWidth(), entity->getHeight()};
+        ///////////////////////////////////////////////////////////////////////////
+        /*SDL_Rect testrect = {player->getX(), player->getY(), player->getWidth(), player->getHeight()};
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect);
 
         if (flip) {
-            SDL_Rect testrecthitbox = {entity->getX()-50, entity->getY(), entity->getWidth(), entity->getHeight()};
+            SDL_Rect testrecthitbox = {player->getX()-50, player->getY(), player->getWidth(), player->getHeight()};
             SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
             SDL_RenderDrawRect(renderer, &testrecthitbox);
         }
         else {
-            SDL_Rect testrecthitbox = {entity->getX()+50, entity->getY(), entity->getWidth(), entity->getHeight()};
+            SDL_Rect testrecthitbox = {player->getX()+50, player->getY(), player->getWidth(), player->getHeight()};
             SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
             SDL_RenderDrawRect(renderer, &testrecthitbox);
         }
 
-        SDL_Rect testrect2 = {entity2->getX(), entity2->getY(), entity2->getWidth(), entity2->getHeight()};
+        SDL_Rect testrect2 = {player2->getX(), player2->getY(), player2->getWidth(), player2->getHeight()};
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
-
-        // Animate and display the sprite
-        Sprite* sprite = dynamic_cast<Sprite*>(entity);
-        if(isJumping1)action1 = 1;
-        else action1 = 0;
-        
-        if(isJumping2)action2 = 1;
-        else action2 = 0;
-        if (sprite != nullptr) {
-            sprite->animate(action1, flip); // Animate the first row of the sprite sheet
-            entity->display(); // Render the sprite to the renderer
-        }
-        if (entity2->getHealth()) {
-            Sprite* sprite2 = dynamic_cast<Sprite*>(entity2);
-            if (sprite2 != nullptr) {
-                sprite2->animate(action2, flip2); // Animate the first row of the sprite sheet
-                entity2->display(); // Render the sprite to the renderer
-            }
-        }
-        if (test && !entity2->getHealth()) {
-            window_init();
-            test = false;
-        }
+        */
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }

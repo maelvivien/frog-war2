@@ -2,16 +2,22 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "entity.hpp"
+#include "sprite.hpp"
+#include "timer.hpp"
+#include <vector>
+#include <iostream>
 
-class Player : public Entity {
+class Player : public Sprite {
 public:
-    Player(const std::string& name, SDL_Renderer* renderer, int x, int y, int vx, int vy);
+    Player(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows);
     ~Player() override;
 
-    void move() override; // Now this method correctly overrides the base class method
+    void gotHit(int damage);
 
-    // ...
+private:
+    Timer _invulnerabiltyFrames;
+    //int _health = 3;
+
 };
 
 #endif // PLAYER_HPP

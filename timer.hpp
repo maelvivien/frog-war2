@@ -9,9 +9,15 @@ public:
     Timer();
 
     void start();
+
+    // Clear Timer
     void stop();
+
+    // Pause the timer while keeping track of the time
     void pause();
     void unpause();
+
+    void reset();
 
     unsigned int getTime();
 
@@ -19,13 +25,13 @@ public:
     bool isPaused();
 
 private:
-    //Variable keeping the starting time
+    // Variable keeping the starting time
     unsigned int startingTime;
 
-    //Variable keeping the pause duration
+    // Variable keeping the pause duration
     unsigned int pausedTime;
 
-    //Status of the timer
+    // Status of the timer
     bool statePaused;
     bool stateStarted;
 };

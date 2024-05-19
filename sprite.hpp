@@ -19,12 +19,13 @@ public:
     bool test_collide(Entity* test, int dx, int dy);
     void move(int dx, int dy, bool jump = true) override;
     void attack(int damage, int size, std::vector<Entity*> entityvector);
-    void setHP(int value);
+    void setHealth(int value);
     int getX();
     int getY();
     int getWidth();
     int getHeight();
     int getHealth();
+    void gotHit(int damage) override;
 
 private:
     int _health = 3;

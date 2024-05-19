@@ -5,7 +5,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
-#include "sprite.hpp"
+#include "enemy.hpp"
+#include "player.hpp"
+#include "timer.hpp"
 #include <vector>
 #include <SDL2/SDL_mixer.h>
 #include <iostream>
@@ -18,14 +20,15 @@ public:
     void display();
     void displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, const char* imagePath4, int displayDuration, int transitionDuration);
     int menu(const char* backgroundImagePath);
+
 private:
     int width, height;
     std::string image_path;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
-    Sprite* entity;
-    Sprite* entity2;
+    Player* player;
+    Player* player2;
     std::vector<Entity*> entityvector;
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
