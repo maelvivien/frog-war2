@@ -288,6 +288,8 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
         */
+        player->displayHealth(5,player2->getHealth());
+        //player->displayHealth(2, player2->getHealth());
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -410,7 +412,7 @@ int Window::menu(const char* backgroundImagePath) {
         SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL); // Render the background
         SDL_RenderPresent(renderer); // Update the screen
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
 
     SDL_DestroyTexture(backgroundTexture);
