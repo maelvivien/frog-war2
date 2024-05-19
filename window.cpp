@@ -291,6 +291,7 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
         */
+       player->displayHealth(5,player2->getHealth());
 
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
