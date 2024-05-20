@@ -66,3 +66,4 @@ void Enemy::update(std::vector<Entity*>& entityvector) {
         }
     }
 }
+

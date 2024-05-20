@@ -90,6 +90,9 @@ void Player::displayHealth(int pv1, int pv2) {
         SDL_RenderCopy(_renderer, greenHeartTexture, NULL, &dst);
     }
 }
+void Player::setAttackType(int attackType) {
+    _attackType = attackType;
+}
 
 int Player::getAttackType() {
     return _attackType;

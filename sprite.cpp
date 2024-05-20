@@ -75,7 +75,7 @@ void Sprite::animate(int row, bool flip) {
 
     SDL_Rect srcRect;
     srcRect.x = (_currentFrame % _numColumns) * _frameWidth;
-    srcRect.y = row * _frameHeight;
+    srcRect.y =  row * _frameHeight;
     srcRect.w = _frameWidth;
     srcRect.h = _frameHeight;
 

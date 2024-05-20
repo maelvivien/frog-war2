@@ -28,7 +28,7 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
-    Player* player;
+    Player* player1;
     Player* player2;
     std::vector<Entity*> entityvector;
     std::vector<Entity*> collisionvector;
