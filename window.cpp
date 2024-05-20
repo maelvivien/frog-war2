@@ -383,7 +383,7 @@ void Window::display() {
             swordanim.stop();
         }
         /////bot1
-	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 3000) {
+	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 3000 && boss == NULL) {
             enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 21, 7, 3);
             entityvector.push_back(enemySpawn1);
         }
@@ -419,6 +419,28 @@ void Window::display() {
                 spawnDelay2.start();
             }
         }*/
+
+        if (boss == NULL && spawnDelay1.getTime() >= 10000) {
+            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 200, 200, 21, 7, 3);
+            entityvector.push_back(boss);
+            for (int i = 0; i < entityvector.size(); i++) {
+                    if (entityvector[i]->getName() == "bot1") {
+                        entityvector.erase(entityvector.begin()+i);
+                    }
+                }
+            
+        }
+
+        if (boss!= NULL) {
+            if (boss->getHealth() <= 0) {
+                for (int i = 0; i < entityvector.size(); i++) {
+                    if (entityvector[i]->getName() == "boss") {
+                        entityvector.erase(entityvector.begin()+i);
+                    }
+                }
+                delete boss;
+            }
+        }
         
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
