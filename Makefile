@@ -28,4 +28,12 @@ attacksprite.o : sprite.hpp attacksprite.hpp attacksprite.cpp
 
 
 clean:
-	rm -f *.o mainOBJ = main.o window.o sprite.o timer.o
+	rm -f *.o mainOBJ = main.o window.o sprite.o timer.o enemy.o player.o attacksprite.o
+
+test: test_fonctions
+
+test_fonctions: test_fonctions.o window.o sprite.o timer.o enemy.o player.o attacksprite.o 
+	$(CC)  test_fonctions.o window.o sprite.o timer.o enemy.o player.o attacksprite.o  -o test $(LIBS)
+
+test_fonctions.o: test_fonctions.cpp window.hpp player.hpp sprite.hpp
+	$(CC) -c test_fonctions.cpp

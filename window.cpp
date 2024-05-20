@@ -24,8 +24,8 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
-    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
+    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7, 3);
+    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 21, 7, 3);
     
     window_init();
 
@@ -111,6 +111,8 @@ void Window::display() {
     int action = 0;
     int dx = 0, dy = 0;
     Timer attackCooldown = Timer();
+    Timer heartDisplayCoolDown = Timer();
+    Timer swordanim = Timer();
     while (running) {
 
 
@@ -170,14 +172,25 @@ void Window::display() {
 
         if (keyState[SDL_SCANCODE_Q]) {
             if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 5000) {   
+                if (player->getAttackType() == 0) { 
+                    
+                    swordanim.start();
+                    if (!flip) { // Turned toward the right side of the screen
+                        player->attack(1,50, entityvector);
+                    }
+                    else {
+                        player->attack(1,-50, entityvector);
+                    }
+                }
+                else if (player->getAttackType() == 1) {
+                    int sens = flip ? -1 : 1;
+                    std::string owner = "Player2";
+                    AttackSprite* fireball = AttackSprite::createFireball(renderer, player->getX(), player->getY(), sens, 0, owner);
 
-                int sens = flip ? -1 : 1;
-                std::string test = "Player2";
-                AttackSprite* fireball = AttackSprite::createFireball(renderer, player->getX(), player->getY(), sens, 0, test);
-
-                // Add the fireball to the list of entities
-                entityvector.push_back(fireball);
-                sensattack = flip;
+                    // Add the fireball to the list of entities
+                    entityvector.push_back(fireball);
+                    sensattack = flip;
+                }
                 if (!attackCooldown.isStarted()) attackCooldown.start();
                 else {
                     // Reset the timer and make it run again from 0
@@ -261,7 +274,7 @@ void Window::display() {
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
-                sprite2->animate(action, flip2); // Animate the first row of the sprite sheet
+                sprite2->animate(2, flip2); // Animate the first row of the sprite sheet
                 player2->display(); // Render the sprite to the renderer
             }
         }
@@ -291,6 +304,27 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
         */
+        if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)){
+            player->displayHealth(5,player2->getHealth());
+            if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
+            else {
+                // Reset the timer and make it run again from 0
+                heartDisplayCoolDown.stop();
+                heartDisplayCoolDown.start();
+            }
+        }
+
+        if (swordanim.isStarted() && swordanim.getTime() < 3000) {
+            SDL_Surface* swordsurf = IMG_Load("texture/sword.png");
+            SDL_Texture* swordtext = SDL_CreateTextureFromSurface(renderer, swordsurf);
+            SDL_FreeSurface(swordsurf);
+
+            SDL_Rect swordbox = {player2->getX()+player2->getWidth(), player2->getY()+player2->getY()/2, 112, 51};
+            SDL_RenderCopy(renderer, swordtext, NULL, &swordbox);
+        }
+        else if (swordanim.isStarted() && swordanim.getTime() > 3000) {
+            swordanim.stop();
+        }
 
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
@@ -304,7 +338,7 @@ void Window::display() {
         }
 
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
 }
 
