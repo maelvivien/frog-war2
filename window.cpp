@@ -24,8 +24,9 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    player2 = new Player(renderer, "Player2", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7, 3);
     player1 = new Player(renderer, "Player1", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 21, 7, 3);
+    player2 = new Player(renderer, "Player2", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7, 3);
+    
     player1->setHealth(5);
     player2->setHealth(5);
     
@@ -40,14 +41,9 @@ void Window::window_init(){
     collisionvector.clear();
     entityvector.clear();
     collisionvector.push_back(player1);
-    if (player1->getHealth()) {
-        collisionvector.push_back(player1);
-    }
-    if (player2->getHealth()) {
-        collisionvector.push_back(player2);
-    }
-    if (player1->getHealth()) entityvector.push_back(player1);
-    if (player2->getHealth()) entityvector.push_back(player2);
+    collisionvector.push_back(player2);
+    entityvector.push_back(player1);
+    entityvector.push_back(player2);
 
     if (image_path == "texture/map.png") {
         Sprite * collision = new Sprite(renderer, 0, 1000, 1920, 120);
@@ -104,6 +100,7 @@ void Window::display() {
     bool running = true;
     SDL_Event event;
 
+    // Data's initialisation for the game
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
     bool flip = false; // Handle the direction of the sprite
     bool flip2 = false;// False if sprite is toward the right
@@ -112,6 +109,18 @@ void Window::display() {
     bool isJumping = false;
     int action = 0;
     int dx = 0, dy = 0;
+
+    // Fireball's data
+    std::string f_name = "fireball";
+    std::string f_imagePath = "texture/fireball.png";
+    int f_w = 100, f_h = 100, f_frameW = 150, f_frameH = 110;
+    int f_numFrames = 6, f_numCols = 6, f_numRows = 1;
+    int f_attackType = 1;
+
+    std::string ownerp1 = "Player1";
+    std::string ownerp2 = "Player2";
+    std::string ownerenemy1 = "bot1";
+
     int swordP = 0; // to indicate what player is attacking with a sword
     Timer attackCooldown = Timer();
     Timer heartDisplayCoolDown = Timer();
@@ -120,23 +129,27 @@ void Window::display() {
     Timer spawnDelay1 = Timer();
     spawnDelay1.start();
 
-    Timer spawnDelay2 = Timer();
-    spawnDelay2.start();
+    // If a second enemy is needed :
+    //Timer spawnDelay2 = Timer();
+    //spawnDelay2.start();
 
-    Timer spawnDelay3 = Timer();
-    spawnDelay3.start();
+    Enemy* enemySpawn1 = NULL;
+    Timer attackCooldownenemy1 = Timer();
 
+    //Enemy* enemySpawn2 = NULL;
+    //Timer attackCooldownenemy2 = Timer();
+
+    
     Timer spawnDelayboss = Timer();
     spawnDelayboss.start();
-    Enemy* enemySpawn1 = NULL;
-    bool enemy1 = false;
-    Timer attackCooldownenemy1 = Timer();
-    Enemy* enemySpawn2 = NULL;
-    Timer attackCooldownenemy2 = Timer();
-    Enemy* enemySpawn3 = NULL;
-    Timer attackCooldownenemy3 = Timer();
+
     Enemy* boss = NULL;
-    Timer attackCooldownboss = Timer();
+    Timer attackCooldownBoss = Timer();
+
+    player1->setAttackType(0);
+    player2->setAttackType(1);
+    player1->setHealth(5);
+    player2->setHealth(3);
 
     while (running) {
 
@@ -167,39 +180,39 @@ void Window::display() {
         dy = 0;
         isJumping = false;
 
-        if (keyState[SDL_SCANCODE_UP]) {
+        if (keyState[SDL_SCANCODE_W]) {
             dx = 0;
             dy = -1;
             isJumping = true;
         }
-        if (keyState[SDL_SCANCODE_DOWN]) {
+        if (keyState[SDL_SCANCODE_S]) {
             dx = 0;
             dy = 1;
         }
-        if (keyState[SDL_SCANCODE_LEFT]) {
+        if (keyState[SDL_SCANCODE_A]) {
             dx = -1;
-            if (!keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
+            if (!keyState[SDL_SCANCODE_W] && !keyState[SDL_SCANCODE_S]) {
                 dy = 0;
             }
             flip = true;
         }
-        if (keyState[SDL_SCANCODE_RIGHT]) {
+        if (keyState[SDL_SCANCODE_D]) {
             dx = 1;
-            if (!keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_DOWN]) {
+            if (!keyState[SDL_SCANCODE_W] && !keyState[SDL_SCANCODE_S]) {
                 dy = 0;
             }
             flip = false;
         }
 
-        if (!keyState[SDL_SCANCODE_UP]) {
+        if (!keyState[SDL_SCANCODE_W]) {
             isJumping = false;
         }
-        player1->setAttackType(0);
+        
 
         if(player1->getHealth() > 0){
 
         
-            if (keyState[SDL_SCANCODE_SPACE]) {
+            if (keyState[SDL_SCANCODE_Q]) {
                 if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 500) {   
                     if (player1->getAttackType() == 0) { 
                         
@@ -214,8 +227,8 @@ void Window::display() {
                     }
                     else if (player1->getAttackType() == 1) {
                         int sens = flip ? -1 : 1;
-                        std::string owner = "Player1";
-                        AttackSprite* fireball = AttackSprite::createFireball(renderer, player1->getX(), player1->getY(), sens, 0, owner);
+                        std::string ownerp1 = "Player1";
+                        AttackSprite* fireball = new AttackSprite(renderer, f_name, f_imagePath, player1->getX(), player1->getY(), f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  sens, 0, ownerp1);
 
                         // Add the fireball to the list of entities
                         entityvector.push_back(fireball);
@@ -245,9 +258,29 @@ void Window::display() {
             }
         }
 
-        if (test && player1->getHealth() <= 0) {
-            window_init();
-            test = false;
+        if (alive && player1->getHealth() <= 0) {
+            //window_init();
+            printf("PROC\n");
+            for (int i = 0; i < entityvector.size(); i++) {
+                if (entityvector[i]->getName() == "Player1") {
+                    printf("proc\n");
+                    entityvector.erase(entityvector.begin()+i);
+                }
+            }
+            for (int i = 0; i < collisionvector.size(); i++) {
+                if (collisionvector[i]->getName() == "Player1") {
+                    printf("proc\n");
+                    std::cout << collisionvector.size() << std::endl;
+                    collisionvector.erase(collisionvector.begin()+i);
+                    std::cout << collisionvector.size() << std::endl;
+                }
+            }
+            alive = false;
+        }
+        else if (!alive && player1->getHealth() <= 0) {
+            ////////////////
+            // LANCER FIN //
+            ////////////////
         }
 
 
@@ -258,7 +291,6 @@ void Window::display() {
         isJumping = false;
         dx = 0;
         dy = 0;
-        player2->setAttackType(1);
         if (keyState[SDL_SCANCODE_I]) {
             dx = 0;
             dy = -1; // move up
@@ -287,7 +319,7 @@ void Window::display() {
         }
 
         if(player2->getHealth() > 0){
-            if (keyState[SDL_SCANCODE_Q]) {
+            if (keyState[SDL_SCANCODE_U]) {
                 if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 500) {   
                     if (player2->getAttackType() == 0) { 
                         swordP = 2;
@@ -301,11 +333,11 @@ void Window::display() {
                     }
                     else if (player2->getAttackType() == 1) {
                         int sens = flip2 ? -1 : 1;
-                        std::string owner = "Player2";
-                        AttackSprite* fireball = AttackSprite::createFireball(renderer, player2->getX(), player2->getY(), sens, 0, owner);
-
+                        
+                        AttackSprite* fireball2 = new AttackSprite(renderer, f_name, f_imagePath, player2->getX(), player2->getY(), f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  sens, 0, ownerp2);
+                        std::cout << fireball2->getOwner() << std::endl;
                         // Add the fireball to the list of entities
-                        entityvector.push_back(fireball);
+                        entityvector.push_back(fireball2);
                         sensattack = flip2;
                     }
                     if (!attackCooldown.isStarted()) attackCooldown.start();
@@ -324,6 +356,7 @@ void Window::display() {
         if(isJumping)action = 1;
         else action = 0;
 
+        // Animate J2's sprite if still alive
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
@@ -332,31 +365,31 @@ void Window::display() {
             }
         }
 
-        if (test && player2->getHealth() <= 0) {
-            window_init();
-            test = false;
+        // Same as J1
+        if (alive && player2->getHealth() <= 0) {
+            for (int i = 0; i < entityvector.size(); i++) {
+                if (entityvector[i]->getName() == "Player2") {
+                    entityvector.erase(entityvector.begin()+i);
+                }
+            }
+            for (int i = 0; i < collisionvector.size(); i++) {
+                if (collisionvector[i]->getName() == "Player2") {
+                    std::cout << collisionvector.size() << std::endl;
+                    collisionvector.erase(collisionvector.begin()+i);
+                    std::cout << collisionvector.size() << std::endl;
+                }
+            }
+            alive = false;
+        }
+        else if (!alive && player2->getHealth() <= 0) {
+            ////////////////
+            // LANCER FIN //
+            ////////////////
         }
 
-        ///////////////////////////////////////////////////////////////////////////
-        /*SDL_Rect testrect = {player->getX(), player->getY(), player->getWidth(), player->getHeight()};
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-        SDL_RenderDrawRect(renderer, &testrect);
+        ///////////////////////////////////////////////////////////////////////////////////
 
-        if (flip) {
-            SDL_Rect testrecthitbox = {player->getX()-50, player->getY(), player->getWidth(), player->getHeight()};
-            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-            SDL_RenderDrawRect(renderer, &testrecthitbox);
-        }
-        else {
-            SDL_Rect testrecthitbox = {player->getX()+50, player->getY(), player->getWidth(), player->getHeight()};
-            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-            SDL_RenderDrawRect(renderer, &testrecthitbox);
-        }
-
-        SDL_Rect testrect2 = {player2->getX(), player2->getY(), player2->getWidth(), player2->getHeight()};
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-        SDL_RenderDrawRect(renderer, &testrect2);
-        */
+        // Health display
         if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)){
             player1->displayHealth(player1->getHealth(),player2->getHealth());
             if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
@@ -367,6 +400,7 @@ void Window::display() {
             }
         }
 
+        // Used to keep the sword animation for a bit of time before stopping it
         if (swordanim.isStarted() && swordanim.getTime() < 200) {
             SDL_Surface* swordsurf = IMG_Load("texture/sword.png");
             SDL_Texture* swordtext = SDL_CreateTextureFromSurface(renderer, swordsurf);
@@ -383,13 +417,17 @@ void Window::display() {
         else if (swordanim.isStarted() && swordanim.getTime() > 200) {
             swordanim.stop();
         }
-        /////bot1
-	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 3000 && boss == NULL) {
-            enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 14, 7, 2);
+
+
+        // Enemy handling
+
+        // Enemis spawn after a certain delay, if the boss isn't present
+	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 20000000 && boss == NULL) {
+            enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 21, 7, 3);
             entityvector.push_back(enemySpawn1);
-            enemy1 = true;
         }
 
+        // If the ennemy exists, checks its health
         if (enemySpawn1 != NULL) {
             if (enemySpawn1->getHealth() <= 0) {
                 for (int i = 0; i < entityvector.size(); i++) {
@@ -397,14 +435,13 @@ void Window::display() {
                         entityvector.erase(entityvector.begin()+i);
                     }
                 }
-
                 delete enemySpawn1;
                 enemySpawn1 = NULL;
                 spawnDelay1.start();
             }
         }
 
-        ///bot 2
+        // For a 2nd ennemy, same idea
         /*if (enemySpawn2 == NULL && spawnDelay2.getTime() >= 3000) {
             enemySpawn2 = new Enemy(renderer, "bot2", "texture/bot2.png", 900, 100, 100, 120, 100, 100, 14, 7, 2);
             entityvector.push_back(enemySpawn2);
@@ -423,17 +460,22 @@ void Window::display() {
             }
         }*/
 
-        if (boss == NULL && spawnDelay1.getTime() >= 10000) {
-            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 700, 300, 300, 150, 150, 14, 7, 2);
-            entityvector.push_back(boss);
+        if (boss == NULL && spawnDelayboss.getTime() >= 3000000) {
+            // Clear other enemis
             for (int i = 0; i < entityvector.size(); i++) {
-                    if (entityvector[i]->getName() == "bot1") {
-                        entityvector.erase(entityvector.begin()+i);
-                    }
+                if (entityvector[i]->getName() == "bot1") {
+                    entityvector.erase(entityvector.begin()+i);
                 }
-            enemy1 = false;  
+            }
+            delete enemySpawn1;
+            enemySpawn1 = NULL;
+            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 200, 200, 21, 7, 3);
+            entityvector.push_back(boss);
+            
+            
         }
 
+        // Handles the boss' health
         if (boss!= NULL) {
             if (boss->getHealth() <= 0) {
                 for (int i = 0; i < entityvector.size(); i++) {
@@ -442,13 +484,20 @@ void Window::display() {
                     }
                 }
                 delete boss;
+                boss = NULL;
+
+                ////////////////
+                // LANCER FIN //
+                ////////////////
             }
         }
         
+        // Handle the entities inside the vector (here either projectiles or enemies)
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
             if (attack != nullptr) {
                 // Update the movement of Attacks sprites
+
                 attack->move(0, 0);
                 attack->update(entityvector); 
                 attack->animate(0, sensattack); // Animate the first row of the sprite sheet
@@ -456,35 +505,23 @@ void Window::display() {
             }
             Enemy* enemy = dynamic_cast<Enemy*>(entity);
             if (enemy != nullptr) {
-                // Update the movement of Attacks sprites
-                if ((!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 2000)&& enemy1) {
-                    std::cout << "test" << std::endl;
-                    std::string owner = "bot1";
-                    //AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+100, 0, 1, owner);
-                    //entityvector.push_back(fireball1);
-                    AttackSprite* fireball2 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()-100, 0, -1, owner);
+                // Each enemy attacks
+                // Same idea reproduced with every enemy
+                if ((!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 2000) && enemySpawn1 != NULL) {
+                    //AttackSprite* fireball2 = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()-50, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  0, -1, ownerenemy1);
+                    //AttackSprite* fireball2 = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()-50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  -1, 0, ownerenemy1);
+                    /*AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()-50, 0, -1, enemy1owner);
+                    entityvector.push_back(fireball1);
+                    AttackSprite* fireball2 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, -1, 0, enemy1owner);
                     entityvector.push_back(fireball2);
-                    AttackSprite* fireball3 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY()+100, 1, 0, owner);
+                    AttackSprite* fireball3 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+enemySpawn1->getWidth()+50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, 1, 0, enemy1owner);
                     entityvector.push_back(fireball3);
-                    AttackSprite* fireball4 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-100, enemySpawn1->getY()-100, -1, 0, owner);
+                    AttackSprite* fireball4 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()+enemySpawn1->getHeight()+10, 0, 1, enemy1owner);
                     entityvector.push_back(fireball4);
-                    attackCooldownenemy1.start();
+                    attackCooldownenemy1.start();*/
                 }
+                else if ((!attackCooldownBoss.isStarted() || attackCooldownBoss.getTime() >= 6000) && boss != NULL) {
 
-                if ((!attackCooldownboss.isStarted() || attackCooldownboss.getTime() >= 5000)) {
-                    std::cout << "test" << std::endl;
-                    /*std::string owner = "boss";
-                    AttackSprite* fireball5 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+200, 0, -1, owner);
-                    entityvector.push_back(fireball5);
-                    AttackSprite* fireball6 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()-200, 1, 1, owner);
-                    entityvector.push_back(fireball6);
-                    AttackSprite* fireball7 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY()+200, 1, -1, owner);
-                    entityvector.push_back(fireball7);
-                    AttackSprite* fireball8 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-100, enemySpawn1->getY()-200, -1, 1, owner);
-                    entityvector.push_back(fireball8);
-                    AttackSprite* fireball9 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY(), 1, -1, owner);
-                    entityvector.push_back(fireball9);
-                    attackCooldownboss.start();*/
                 }
                 enemy->move(0, 0);
                 enemy->update(entityvector); 

@@ -33,7 +33,7 @@ private:
     std::vector<Entity*> entityvector;
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
-    bool test = true;
+    bool alive = true;
     void fadeTransition(SDL_Texture* startTexture, SDL_Texture* endTexture, int transitionDuration);
 };
 
