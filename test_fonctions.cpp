@@ -75,4 +75,24 @@ BOOST_AUTO_TEST_CASE( Timer_Test2 )
     BOOST_CHECK(test_timer.isStarted() && test_timer.isPaused());
 }
 
+BOOST_AUTO_TEST_CASE( Fireball_Test )
+{
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    window = SDL_CreateWindow("Window Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 1080, SDL_WINDOW_SHOWN);
+    if (window == nullptr) {
+        // handle error
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if (renderer == nullptr) {
+        // handle error
+    }
+    int sens = 1;
+    std::string owner = "Player1";
+    AttackSprite* fireball = AttackSprite::createFireball(renderer, 100, 100, sens, 0, owner);
+    fireball->move(0, 0);
+    BOOST_CHECK(fireball->getX() == 100+2);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

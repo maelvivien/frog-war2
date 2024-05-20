@@ -28,7 +28,7 @@ attacksprite.o : sprite.hpp attacksprite.hpp attacksprite.cpp
 
 
 clean:
-	rm -f *.o mainOBJ = main.o window.o sprite.o timer.o enemy.o player.o attacksprite.o
+	rm -f *.o mainOBJ = main.o window.o sprite.o timer.o enemy.o player.o attacksprite.o test_fonctions.o
 
 test: test_fonctions
 
