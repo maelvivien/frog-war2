@@ -116,7 +116,9 @@ void Window::display() {
     Timer swordanim = Timer();
     Timer spawnDelay = Timer();
     spawnDelay.start();
-    Enemy* enemySpawn = NULL;
+    Enemy* enemySpawn1 = NULL;
+    Timer attackCooldownenemy1 = Timer();
+
     while (running) {
 
 
@@ -363,20 +365,20 @@ void Window::display() {
             swordanim.stop();
         }
 	
-	if (enemySpawn == NULL && spawnDelay.getTime() >= 3000) {
-            enemySpawn = new Enemy(renderer, "Enemy", "texture/bot1.png", 850, 100, 100, 120, 100, 120, 21, 7, 3);
-            entityvector.push_back(enemySpawn);
+	if (enemySpawn1 == NULL && spawnDelay.getTime() >= 3000) {
+            enemySpawn1 = new Enemy(renderer, "Enemy", "texture/bot1.png", 850, 300, 100, 100, 100, 100, 21, 7, 3);
+            entityvector.push_back(enemySpawn1);
         }
 
-        if (enemySpawn != NULL) {
-            if (enemySpawn->getHealth() <= 0) {
+        if (enemySpawn1 != NULL) {
+            if (enemySpawn1->getHealth() <= 0) {
                 for (int i = 0; i < entityvector.size(); i++) {
                     if (entityvector[i]->getName() == "Enemy") {
                         entityvector.erase(entityvector.begin()+i);
                     }
                 }
-                delete enemySpawn;
-                enemySpawn = NULL;
+                delete enemySpawn1;
+                enemySpawn1 = NULL;
                 spawnDelay.start();
             }
         }
@@ -393,6 +395,15 @@ void Window::display() {
             Enemy* enemy = dynamic_cast<Enemy*>(entity);
             if (enemy != nullptr) {
                 // Update the movement of Attacks sprites
+                if (!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 3000) {
+                    std::cout << "test" << std::endl;
+                    std::string owner = "bot1";
+                    AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+100, 0, 1, owner);
+                    entityvector.push_back(fireball1);
+                    AttackSprite* fireball2 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()-100, 0, -1, owner);
+                    entityvector.push_back(fireball2);
+                    attackCooldownenemy1.start();
+                }
                 enemy->move(0, 0);
                 enemy->update(entityvector); 
                 enemy->animate(0, 1); // Animate the first row of the sprite sheet
