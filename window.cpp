@@ -277,10 +277,26 @@ void Window::display() {
             }
             alive = false;
         }
-        else if (!alive && player1->getHealth() <= 0) {
+        else if (!alive && player1->getHealth() > 0 && boss != NULL) {
             ////////////////
             // LANCER FIN //
             ////////////////
+            std::cout << "The winner is player 1\n" << std::endl;
+            std::cout << "press echap to leave the game" << std::endl;
+            SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
+            if (texture1 == nullptr) {
+                std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+            } else {
+                SDL_Rect dst;
+                dst.x = 0;
+                dst.y = 0; 
+                dst.w = 1920; 
+                dst.h = 1080; 
+                SDL_RenderCopy(renderer, texture1, NULL, &dst);
+            }
+
+            // Present the renderer
+            SDL_RenderPresent(renderer);
         }
 
 
@@ -381,16 +397,56 @@ void Window::display() {
             }
             alive = false;
         }
-        else if (!alive && player2->getHealth() <= 0) {
+        else if (!alive && player2->getHealth() > 0 && boss != NULL) {
+            ////////////////
+            // player2 win//
+            ////////////////
+            std::cout << "The winner is player 2\n" << std::endl;
+            std::cout << "press echap to leave the game" << std::endl;
+            SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
+            if (texture1 == nullptr) {
+                std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+            } else {
+                SDL_Rect dst;
+                dst.x = 0;
+                dst.y = 0; 
+                dst.w = 1920; 
+                dst.h = 1080; 
+                SDL_RenderCopy(renderer, texture1, NULL, &dst);
+            }
+
+            // Present the renderer
+            SDL_RenderPresent(renderer);
+        }
+
+        // if both players are dead, the game is over
+
+        if ( player2->getHealth() < 0 && player1->getHealth() < 0) {
             ////////////////
             // LANCER FIN //
             ////////////////
+            std::cout << "you lost the game, the robot frog stays the king of the pond\n" << std::endl;
+            std::cout << "press echap to leave the game" << std::endl;
+            SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
+            if (texture1 == nullptr) {
+                std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+            } else {
+                SDL_Rect dst;
+                dst.x = 0;
+                dst.y = 0; 
+                dst.w = 1920; 
+                dst.h = 1080; 
+                SDL_RenderCopy(renderer, texture1, NULL, &dst);
+            }
+
+            // Present the renderer
+            SDL_RenderPresent(renderer);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // Health display
-        if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)){
+        if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)&& (alive || player2->getHealth() > 0)){
             player1->displayHealth(player1->getHealth(),player2->getHealth());
             if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
             else {
@@ -489,7 +545,22 @@ void Window::display() {
                 ////////////////
                 // LANCER FIN //
                 ////////////////
-            }
+
+                SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/happyending.png");
+                if (texture1 == nullptr) {
+                    std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+                } else {
+                    SDL_Rect dst;
+                    dst.x = 0;
+                    dst.y = 0; 
+                    dst.w = 1920; 
+                    dst.h = 1080; 
+                    SDL_RenderCopy(renderer, texture1, NULL, &dst);
+                }
+
+                // Present the renderer
+                SDL_RenderPresent(renderer);
+                }
         }
         
         // Handle the entities inside the vector (here either projectiles or enemies)
