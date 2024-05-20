@@ -175,10 +175,11 @@ void Window::display() {
                 int sens = flip ? -1 : 1;
                 std::string test = "Player2";
                 AttackSprite* fireball = AttackSprite::createFireball(renderer, player->getX(), player->getY(), sens, 0, test);
-                AttackSprite* sword = AttackSprite::createSword(renderer, player->getX(), player->getY(), test);
-                // Add the fireball to the list of entities
                 entityvector.push_back(fireball);
-                entityvector.push_back(sword);
+                //AttackSprite* sword = AttackSprite::createSword(renderer, player->getX(), player->getY(), test);
+                // Add the fireball to the list of entities
+                
+                //entityvector.push_back(sword);
                 sensattack = flip;
                 if (!attackCooldown.isStarted()) attackCooldown.start();
                 else {

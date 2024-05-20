@@ -26,11 +26,11 @@ AttackSprite* AttackSprite::createSword(SDL_Renderer* renderer, int x, int y, st
     const int w = 100, h = 100, frameW = 110, frameH = 100;
     const int numFrames = 5, numCols = 5, numRows = 1;
     const int attackType = 1, damage = 1;
-    AttackSprite* fireball = new AttackSprite(renderer, name, imagePath, x, y, w, h, frameW, frameH, numFrames, numCols, numRows);
-    fireball->setOwner(owner);
-    fireball->setDamage(damage);
+    AttackSprite* sword = new AttackSprite(renderer, name, imagePath, x, y, w, h, frameW, frameH, numFrames, numCols, numRows);
+    sword->setOwner(owner);
+    sword->setDamage(damage);
     
-    return fireball;
+    return sword;
 }
 
 
@@ -40,8 +40,8 @@ void AttackSprite::move(int dx, int dy) {
         this->_y += this->getFy()*2;
     }
     else if (this->getName() == "sword") {
-        this->_x += dx;
-        this->_y += dy;
+        this->_x = dx;
+        this->_y = dy;
     }
 }
 
