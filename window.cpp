@@ -338,7 +338,6 @@ void Window::display() {
         if (enemySpawn != NULL) {
             if (enemySpawn->getHealth() <= 0) {
                 for (int i = 0; i < entityvector.size(); i++) {
-                    std::cout << "WTF" << std::endl;
                     if (entityvector[i]->getName() == "Enemy") {
                         entityvector.erase(entityvector.begin()+i);
                     }
