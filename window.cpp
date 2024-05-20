@@ -2,9 +2,13 @@
 #include "window.hpp"
 #include <chrono>
 #include <thread>
+#include <stdlib.h>
+#include <time.h>
 
 Window::Window(const std::string& image_path, int width, int height)
     : width(width), height(height), image_path(image_path) {
+    
+    srand(time(NULL));
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_VIDEO) < 0) {
         printf("Error initializing the process\n");
@@ -26,9 +30,6 @@ Window::Window(const std::string& image_path, int width, int height)
 
     player1 = new Player(renderer, "Player1", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 21, 7, 3);
     player2 = new Player(renderer, "Player2", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7, 3);
-    
-    player1->setHealth(5);
-    player2->setHealth(5);
     
     window_init();
 
@@ -120,6 +121,7 @@ void Window::display() {
     std::string ownerp1 = "Player1";
     std::string ownerp2 = "Player2";
     std::string ownerenemy1 = "bot1";
+    std::string ownerboss = "boss";
 
     int swordP = 0; // to indicate what player is attacking with a sword
     Timer attackCooldown = Timer();
@@ -279,10 +281,10 @@ void Window::display() {
         }
         else if (!alive && player1->getHealth() > 0 && boss != NULL) {
             ////////////////
-            // LANCER FIN //
+            //// ENDING ////
             ////////////////
-            std::cout << "The winner is player 1\n" << std::endl;
-            std::cout << "press echap to leave the game" << std::endl;
+            std::cout << "The winner is player 1!\n" << std::endl;
+            std::cout << "Press escape to leave the game" << std::endl;
             SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
             if (texture1 == nullptr) {
                 std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
@@ -399,10 +401,10 @@ void Window::display() {
         }
         else if (!alive && player2->getHealth() > 0 && boss != NULL) {
             ////////////////
-            // player2 win//
+            //// ENDING ////
             ////////////////
-            std::cout << "The winner is player 2\n" << std::endl;
-            std::cout << "press echap to leave the game" << std::endl;
+            std::cout << "The winner is player 2!\n" << std::endl;
+            std::cout << "Press escape to leave the game" << std::endl;
             SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
             if (texture1 == nullptr) {
                 std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
@@ -423,10 +425,10 @@ void Window::display() {
 
         if ( player2->getHealth() < 0 && player1->getHealth() < 0) {
             ////////////////
-            // LANCER FIN //
+            //// ENDING ////
             ////////////////
-            std::cout << "you lost the game, the robot frog stays the king of the pond\n" << std::endl;
-            std::cout << "press echap to leave the game" << std::endl;
+            std::cout << "You lost the game, the robot frog stays the king of the pond...\n" << std::endl;
+            std::cout << "Press escape to leave the game" << std::endl;
             SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
             if (texture1 == nullptr) {
                 std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
@@ -478,7 +480,7 @@ void Window::display() {
         // Enemy handling
 
         // Enemis spawn after a certain delay, if the boss isn't present
-	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 20000000 && boss == NULL) {
+	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 10000 && boss == NULL) {
             enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 21, 7, 3);
             entityvector.push_back(enemySpawn1);
         }
@@ -516,7 +518,7 @@ void Window::display() {
             }
         }*/
 
-        if (boss == NULL && spawnDelayboss.getTime() >= 3000000) {
+        if (boss == NULL && spawnDelayboss.getTime() >= 30000) {
             // Clear other enemis
             for (int i = 0; i < entityvector.size(); i++) {
                 if (entityvector[i]->getName() == "bot1") {
@@ -525,7 +527,7 @@ void Window::display() {
             }
             delete enemySpawn1;
             enemySpawn1 = NULL;
-            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 200, 200, 21, 7, 3);
+            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 150, 150, 14, 7, 3);
             entityvector.push_back(boss);
             
             
@@ -543,7 +545,7 @@ void Window::display() {
                 boss = NULL;
 
                 ////////////////
-                // LANCER FIN //
+                //// ENDING ////
                 ////////////////
 
                 SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/happyending.png");
@@ -579,20 +581,90 @@ void Window::display() {
                 // Each enemy attacks
                 // Same idea reproduced with every enemy
                 if ((!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 2000) && enemySpawn1 != NULL) {
-                    //AttackSprite* fireball2 = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()-50, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  0, -1, ownerenemy1);
-                    //AttackSprite* fireball2 = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()-50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  -1, 0, ownerenemy1);
-                    /*AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()-50, 0, -1, enemy1owner);
-                    entityvector.push_back(fireball1);
-                    AttackSprite* fireball2 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, -1, 0, enemy1owner);
-                    entityvector.push_back(fireball2);
-                    AttackSprite* fireball3 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+enemySpawn1->getWidth()+50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, 1, 0, enemy1owner);
-                    entityvector.push_back(fireball3);
-                    AttackSprite* fireball4 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()+enemySpawn1->getHeight()+10, 0, 1, enemy1owner);
-                    entityvector.push_back(fireball4);
-                    attackCooldownenemy1.start();*/
+                    AttackSprite* fireballenemy = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()-50, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  0, -1, ownerenemy1);
+                    entityvector.push_back(fireballenemy);
+                    fireballenemy = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()-50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  -1, 0, ownerenemy1);
+                    entityvector.push_back(fireballenemy);
+                    fireballenemy = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()+enemySpawn1->getWidth()+50, enemySpawn1->getY()+enemySpawn1->getHeight()/2, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  1, 0, ownerenemy1);
+                    entityvector.push_back(fireballenemy);
+                    fireballenemy = new AttackSprite(renderer, f_name, f_imagePath, enemySpawn1->getX()+enemySpawn1->getWidth()/2, enemySpawn1->getY()+enemySpawn1->getHeight()+10, f_w, f_h, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 1,  0, 1, ownerenemy1);
+                    entityvector.push_back(fireballenemy);
+                    attackCooldownenemy1.start();
                 }
                 else if ((!attackCooldownBoss.isStarted() || attackCooldownBoss.getTime() >= 6000) && boss != NULL) {
-
+                    int roll = rand()%2;
+                    AttackSprite* fireballboss;
+                    // Low left attack
+                    if (roll == 0) {
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()+150, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()+100, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()+50, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY(), f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-50, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-100, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-150, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                    }
+                    // High left attack
+                    else {
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-500, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-450, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-400, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-350, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-300, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-250, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX(), boss->getY()-200, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  -1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                    }
+                    
+                    roll = rand()%2;
+                    // Low right attack
+                    if (roll == 0) {
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()+150, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()+100, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()+50, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY(), f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-50, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-100, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-150, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                    }
+                    // High right attack
+                    else {
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-500, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-450, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-400, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-350, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-300, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-250, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                        fireballboss = new AttackSprite(renderer, f_name, f_imagePath, boss->getX()+boss->getWidth(), boss->getY()-200, f_w, f_h/2, f_frameW, f_frameH, f_numFrames, f_numCols, f_numRows, 2,  1, 0, ownerboss);
+                        entityvector.push_back(fireballboss);
+                    }
+                    attackCooldownBoss.start();
                 }
                 enemy->move(0, 0);
                 enemy->update(entityvector); 
