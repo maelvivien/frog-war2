@@ -26,6 +26,7 @@ public:
     int getHeight();
     int getHealth();
     void gotHit(int damage) override;
+    virtual bool getStateInv() { return true;}
 
 private:
     int _health = 3;

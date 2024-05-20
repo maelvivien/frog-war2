@@ -15,6 +15,7 @@ public:
     void gotHit(int damage);
     void displayHealth(int pv1, int pv2);
     int getAttackType();
+    bool getStateInv();
     
 private:
     Timer _invulnerabiltyFrames;

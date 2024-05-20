@@ -85,6 +85,8 @@ void Window::window_init(){
 }
 
 Window::~Window() {
+    delete player;
+    delete player2;
     for (long unsigned int i = 0; i < entityvector.size(); i++){
         entityvector.erase(entityvector.begin());
     }
@@ -113,6 +115,9 @@ void Window::display() {
     Timer attackCooldown = Timer();
     Timer heartDisplayCoolDown = Timer();
     Timer swordanim = Timer();
+    Timer spawnDelay = Timer();
+    spawnDelay.start();
+    Enemy* enemySpawn = NULL;
     while (running) {
 
 
@@ -133,7 +138,6 @@ void Window::display() {
         }
 
         if (keyState[SDL_SCANCODE_ESCAPE]) {
-            std::cout << player->getHealth() << " / " << player2->getHealth() << std::endl;
             running = false;
         }
 
@@ -171,7 +175,7 @@ void Window::display() {
         }
 
         if (keyState[SDL_SCANCODE_Q]) {
-            if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 500) {   
+            if (!attackCooldown.isStarted() || attackCooldown.getTime() >= 5000) {   
                 if (player->getAttackType() == 0) { 
                     
                     swordanim.start();
@@ -210,7 +214,7 @@ void Window::display() {
         if (player->getHealth() > 0) {
             Sprite* sprite = dynamic_cast<Sprite*>(player);
             if (sprite != nullptr) {
-                sprite->animate(0, flip); // Animate the first row of the sprite sheet
+                sprite->animate(action, flip); // Animate the first row of the sprite sheet
                 player->display(); // Render the sprite to the renderer
             }
         }
@@ -274,7 +278,7 @@ void Window::display() {
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
-                sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
+                sprite2->animate(2, flip2); // Animate the first row of the sprite sheet
                 player2->display(); // Render the sprite to the renderer
             }
         }
@@ -305,7 +309,7 @@ void Window::display() {
         SDL_RenderDrawRect(renderer, &testrect2);
         */
         if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)){
-            player->displayHealth(player->getHealth(),player2->getHealth());
+            player->displayHealth(5,player2->getHealth());
             if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
             else {
                 // Reset the timer and make it run again from 0
@@ -314,22 +318,37 @@ void Window::display() {
             }
         }
 
-        if (swordanim.isStarted() && swordanim.getTime() < 200) {
+        if (swordanim.isStarted() && swordanim.getTime() < 3000) {
             SDL_Surface* swordsurf = IMG_Load("texture/sword.png");
             SDL_Texture* swordtext = SDL_CreateTextureFromSurface(renderer, swordsurf);
             SDL_FreeSurface(swordsurf);
 
-            //SDL_Rect swordbox = {player2->getX()+player2->getWidth(), player2->getY()+player2->getY()/2, 112, 51};
-            int x = flip ? player->getX()-player->getWidth() : player->getX()+player->getWidth();
-            SDL_Rect swordbox = {x, player->getY()+player->getHeight()/2, 112, 51};
-            SDL_RendererFlip _flipType = flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE; // Update flipType
-            SDL_RenderCopyEx(renderer, swordtext, NULL, &swordbox, 0, NULL, _flipType);
-    
+            SDL_Rect swordbox = {player2->getX()+player2->getWidth(), player2->getY()+player2->getY()/2, 112, 51};
+            SDL_RenderCopy(renderer, swordtext, NULL, &swordbox);
         }
-        else if (swordanim.isStarted() && swordanim.getTime() > 200) {
+        else if (swordanim.isStarted() && swordanim.getTime() > 3000) {
             swordanim.stop();
         }
 
+        if (enemySpawn == NULL && spawnDelay.getTime() >= 3000) {
+            enemySpawn = new Enemy(renderer, "Enemy", "texture/bot1.png", 850, 100, 100, 120, 100, 120, 21, 7, 3);
+            entityvector.push_back(enemySpawn);
+        }
+
+        if (enemySpawn != NULL) {
+            if (enemySpawn->getHealth() <= 0) {
+                for (int i = 0; i < entityvector.size(); i++) {
+                    std::cout << "WTF" << std::endl;
+                    if (entityvector[i]->getName() == "Enemy") {
+                        entityvector.erase(entityvector.begin()+i);
+                    }
+                }
+                delete enemySpawn;
+                enemySpawn = NULL;
+                spawnDelay.start();
+            }
+        }
+    
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
             if (attack != nullptr) {
@@ -338,6 +357,14 @@ void Window::display() {
                 attack->update(entityvector); 
                 attack->animate(0, sensattack); // Animate the first row of the sprite sheet
                 attack->display(); // Render the sprite to the renderer
+            }
+            Enemy* enemy = dynamic_cast<Enemy*>(entity);
+            if (enemy != nullptr) {
+                // Update the movement of Attacks sprites
+                enemy->move(0, 0);
+                enemy->update(entityvector); 
+                enemy->animate(0, 1); // Animate the first row of the sprite sheet
+                enemy->display(); // Render the sprite to the renderer
             }
         }
 

@@ -94,3 +94,8 @@ void Player::displayHealth(int pv1, int pv2) {
 int Player::getAttackType() {
     return _attackType;
 }
+
+bool Player::getStateInv() {
+    if (_invulnerabiltyFrames.isStarted() && _invulnerabiltyFrames.getTime() <= 10000) return true;
+    else return false;
+}
