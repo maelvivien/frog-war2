@@ -129,6 +129,7 @@ void Window::display() {
     Timer spawnDelayboss = Timer();
     spawnDelayboss.start();
     Enemy* enemySpawn1 = NULL;
+    bool enemy1 = false;
     Timer attackCooldownenemy1 = Timer();
     Enemy* enemySpawn2 = NULL;
     Timer attackCooldownenemy2 = Timer();
@@ -384,8 +385,9 @@ void Window::display() {
         }
         /////bot1
 	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 3000 && boss == NULL) {
-            enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 21, 7, 3);
+            enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 14, 7, 2);
             entityvector.push_back(enemySpawn1);
+            enemy1 = true;
         }
 
         if (enemySpawn1 != NULL) {
@@ -395,6 +397,7 @@ void Window::display() {
                         entityvector.erase(entityvector.begin()+i);
                     }
                 }
+
                 delete enemySpawn1;
                 enemySpawn1 = NULL;
                 spawnDelay1.start();
@@ -421,14 +424,14 @@ void Window::display() {
         }*/
 
         if (boss == NULL && spawnDelay1.getTime() >= 10000) {
-            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 200, 200, 21, 7, 3);
+            boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 700, 300, 300, 150, 150, 14, 7, 2);
             entityvector.push_back(boss);
             for (int i = 0; i < entityvector.size(); i++) {
                     if (entityvector[i]->getName() == "bot1") {
                         entityvector.erase(entityvector.begin()+i);
                     }
                 }
-            
+            enemy1 = false;  
         }
 
         if (boss!= NULL) {
@@ -454,11 +457,11 @@ void Window::display() {
             Enemy* enemy = dynamic_cast<Enemy*>(entity);
             if (enemy != nullptr) {
                 // Update the movement of Attacks sprites
-                if (!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 2000) {
+                if ((!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 2000)&& enemy1) {
                     std::cout << "test" << std::endl;
                     std::string owner = "bot1";
-                    AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+100, 0, 1, owner);
-                    entityvector.push_back(fireball1);
+                    //AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+100, 0, 1, owner);
+                    //entityvector.push_back(fireball1);
                     AttackSprite* fireball2 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()-100, 0, -1, owner);
                     entityvector.push_back(fireball2);
                     AttackSprite* fireball3 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY()+100, 1, 0, owner);
@@ -466,6 +469,22 @@ void Window::display() {
                     AttackSprite* fireball4 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-100, enemySpawn1->getY()-100, -1, 0, owner);
                     entityvector.push_back(fireball4);
                     attackCooldownenemy1.start();
+                }
+
+                if ((!attackCooldownboss.isStarted() || attackCooldownboss.getTime() >= 5000)) {
+                    std::cout << "test" << std::endl;
+                    /*std::string owner = "boss";
+                    AttackSprite* fireball5 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+200, 0, -1, owner);
+                    entityvector.push_back(fireball5);
+                    AttackSprite* fireball6 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()-200, 1, 1, owner);
+                    entityvector.push_back(fireball6);
+                    AttackSprite* fireball7 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY()+200, 1, -1, owner);
+                    entityvector.push_back(fireball7);
+                    AttackSprite* fireball8 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-100, enemySpawn1->getY()-200, -1, 1, owner);
+                    entityvector.push_back(fireball8);
+                    AttackSprite* fireball9 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY(), 1, -1, owner);
+                    entityvector.push_back(fireball9);
+                    attackCooldownboss.start();*/
                 }
                 enemy->move(0, 0);
                 enemy->update(entityvector); 

@@ -1,20 +1,26 @@
 # frogwar
 little C++ game
 
-Here's a brief overview of the Sprite class:
+Authors : Arthur Pourpard / Maël Vivien
 
-The Sprite class has two constructors. The first one takes a renderer, name, image path, position (x, y), dimensions (width, height), frame dimensions (frameWidth, frameHeight), number of frames (numFrames), and number of columns (numColumns). It loads an image from the provided path and creates a texture from it. The second constructor takes a renderer, position, and dimensions, and sets the name to an empty string.
+liste des bibliotheque : 
+Standard Template Library (STL)
+SDL2
+SDL2_image
+SDL2_mixer
+iostream
+string
+vector
+chrono
+thread
 
-The display method renders the sprite on the screen. It calculates the source rectangle based on the current frame and renders it to the destination rectangle.
 
-The animate method updates the current frame based on the time elapsed since the last frame was rendered. It then renders the current frame, flipping it horizontally if the flip parameter is true.
+Pour compiler le programme, si toute les bibliotheque precedentes sont installées, se compile avec un "make" puis se lance avec "./main"
 
-The move method updates the sprite's position based on the provided deltas (dx, dy). It also applies gravity and friction to the sprite's speed, and allows the sprite to jump if it's not already jumping.
 
-The test_collide method checks if the sprite would collide with another entity if it moved by the provided deltas.
+Frog war est un jeu de combat 1V1. L'idée de base est que 2 joueurs s'affrontes tout en affrontant des bots. Au bout d'un moment, un boss arrive. Si un joueur tue le boss en etant seul survivant, il debloque la victoire solo. Si les joueurs choisissent de ne pas se tuer et et arrivent à tuer le boss sans mourir, ils débloquent la victoire en duo.
 
-The setCollisionVector static method sets the collision vector, which is a list of all entities that the sprite could potentially collide with.
 
-The getName, getX, getY, getWidth, and getHeight methods are simple getters that return the sprite's name, position, and dimensions, respectively.
 
-The Sprite class also has a destructor, but it's currently empty.
+Par manque de temps nous avons malheureusement du supprimer certaines fonctionnalitées prevues à la base comme des items bonus laché par les enemis de la premiere phase de jeux
+Les joueur devait aussi pouvoir changer d'armes, actuellement il est possible de changer le mode boule de feu ou épée dand le code mais pas en jeu.
