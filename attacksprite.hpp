@@ -10,7 +10,6 @@ public:
     void move(int dx, int dy); // Moves the AttackSprite
     void update(std::vector<Entity*>& entityvector); // Checks for collisions and destroys the AttackSprite if it touches something
     static AttackSprite* createFireball(SDL_Renderer* renderer, int x, int y, int fx, int fy, std::string owner);
-    static AttackSprite*createSword(SDL_Renderer* renderer, int x, int y, std::string owner);
     void setFx(int fx) { _fx = fx; }
     void setFy(int fy) { _fy = fy; }
     int getFx() const { return _fx; }

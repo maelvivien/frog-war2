@@ -24,8 +24,8 @@ Window::Window(const std::string& image_path, int width, int height)
         // handle error
     }
 
-    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7,3);
-    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 21, 7,3);
+    player2 = new Player(renderer, "Player1", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 14, 7,2);
+    player = new Player(renderer, "Player2", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 14, 7,2);
     
     window_init();
 
@@ -111,7 +111,6 @@ void Window::display() {
     int action = 0;
     int dx = 0, dy = 0;
     Timer attackCooldown = Timer();
-    Timer heartDisplayCoolDown = Timer();
     while (running) {
 
 
@@ -175,10 +174,9 @@ void Window::display() {
                 int sens = flip ? -1 : 1;
                 std::string test = "Player2";
                 AttackSprite* fireball = AttackSprite::createFireball(renderer, player->getX(), player->getY(), sens, 0, test);
-                AttackSprite* sword = AttackSprite::createSword(renderer, player->getX(), player->getY(), test);
+
                 // Add the fireball to the list of entities
                 entityvector.push_back(fireball);
-                entityvector.push_back(sword);
                 sensattack = flip;
                 if (!attackCooldown.isStarted()) attackCooldown.start();
                 else {
@@ -199,7 +197,7 @@ void Window::display() {
         if (player->getHealth() > 0) {
             Sprite* sprite = dynamic_cast<Sprite*>(player);
             if (sprite != nullptr) {
-                sprite->animate(2, flip); // Animate the first row of the sprite sheet
+                sprite->animate(action, flip); // Animate the first row of the sprite sheet
                 player->display(); // Render the sprite to the renderer
             }
         }
@@ -263,7 +261,7 @@ void Window::display() {
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
-                sprite2->animate(2, flip2); // Animate the first row of the sprite sheet
+                sprite2->animate(action, flip2); // Animate the first row of the sprite sheet
                 player2->display(); // Render the sprite to the renderer
             }
         }
@@ -293,24 +291,12 @@ void Window::display() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
         SDL_RenderDrawRect(renderer, &testrect2);
         */
-       if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)){
-
-        player->displayHealth(5,player2->getHealth());
-        if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
-                else {
-                    // Reset the timer and make it run again from 0
-                    heartDisplayCoolDown.stop();
-                    heartDisplayCoolDown.start();
-                }
-
-       }
 
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
             if (attack != nullptr) {
                 // Update the movement of Attacks sprites
-                attack->move(0, 0); 
-                
+                attack->move(0, 0);
                 attack->update(entityvector); 
                 attack->animate(0, sensattack); // Animate the first row of the sprite sheet
                 attack->display(); // Render the sprite to the renderer
@@ -318,7 +304,7 @@ void Window::display() {
         }
 
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
-        std::this_thread::sleep_for(std::chrono::milliseconds(8));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
