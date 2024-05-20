@@ -9,10 +9,24 @@ Enemy::~Enemy() {
 }
 
 void Enemy::move(int dx, int dy) {
-    if (_x > _startX + 400 || _x < _startX - 400) {
+
+    if (this->getName() == "bot1") {
+        if (_x > _startX + 400 || _x < _startX - 400) {
         setFx(-getFx());
+        }
+        _x += getFx()*2;
+        
     }
-    _x += getFx()*2;
+
+    if (this->getName() == "bot2") {
+        if (_x > _startX + 400 || _x < _startX - 400) {
+        setFx(-getFx());
+        }
+        _x += getFx()*2;
+    
+    }
+    
+    
 }
 
 void Enemy::gotHit(int damage) {

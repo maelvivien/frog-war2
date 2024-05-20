@@ -26,6 +26,8 @@ Window::Window(const std::string& image_path, int width, int height)
 
     player2 = new Player(renderer, "Player2", "texture/small_frog.png", 100, 100, 100, 80, 150, 111, 21, 7, 3);
     player1 = new Player(renderer, "Player1", "texture/frogknight.png", 850, 100, 100, 120, 100, 120, 21, 7, 3);
+    player1->setHealth(5);
+    player2->setHealth(5);
     
     window_init();
 
@@ -114,10 +116,26 @@ void Window::display() {
     Timer attackCooldown = Timer();
     Timer heartDisplayCoolDown = Timer();
     Timer swordanim = Timer();
-    Timer spawnDelay = Timer();
-    spawnDelay.start();
+
+    Timer spawnDelay1 = Timer();
+    spawnDelay1.start();
+
+    Timer spawnDelay2 = Timer();
+    spawnDelay2.start();
+
+    Timer spawnDelay3 = Timer();
+    spawnDelay3.start();
+
+    Timer spawnDelayboss = Timer();
+    spawnDelayboss.start();
     Enemy* enemySpawn1 = NULL;
     Timer attackCooldownenemy1 = Timer();
+    Enemy* enemySpawn2 = NULL;
+    Timer attackCooldownenemy2 = Timer();
+    Enemy* enemySpawn3 = NULL;
+    Timer attackCooldownenemy3 = Timer();
+    Enemy* boss = NULL;
+    Timer attackCooldownboss = Timer();
 
     while (running) {
 
@@ -175,7 +193,7 @@ void Window::display() {
         if (!keyState[SDL_SCANCODE_UP]) {
             isJumping = false;
         }
-        player1->setAttackType(1);
+        player1->setAttackType(0);
 
         if(player1->getHealth() > 0){
 
@@ -239,7 +257,7 @@ void Window::display() {
         isJumping = false;
         dx = 0;
         dy = 0;
-        player2->setAttackType(0);
+        player2->setAttackType(1);
         if (keyState[SDL_SCANCODE_I]) {
             dx = 0;
             dy = -1; // move up
@@ -364,24 +382,43 @@ void Window::display() {
         else if (swordanim.isStarted() && swordanim.getTime() > 200) {
             swordanim.stop();
         }
-	
-	if (enemySpawn1 == NULL && spawnDelay.getTime() >= 3000) {
-            enemySpawn1 = new Enemy(renderer, "Enemy", "texture/bot1.png", 850, 300, 100, 100, 100, 100, 21, 7, 3);
+        /////bot1
+	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 3000) {
+            enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 21, 7, 3);
             entityvector.push_back(enemySpawn1);
         }
 
         if (enemySpawn1 != NULL) {
             if (enemySpawn1->getHealth() <= 0) {
                 for (int i = 0; i < entityvector.size(); i++) {
-                    if (entityvector[i]->getName() == "Enemy") {
+                    if (entityvector[i]->getName() == "bot1") {
                         entityvector.erase(entityvector.begin()+i);
                     }
                 }
                 delete enemySpawn1;
                 enemySpawn1 = NULL;
-                spawnDelay.start();
+                spawnDelay1.start();
             }
         }
+
+        ///bot 2
+        /*if (enemySpawn2 == NULL && spawnDelay2.getTime() >= 3000) {
+            enemySpawn2 = new Enemy(renderer, "bot2", "texture/bot2.png", 900, 100, 100, 120, 100, 100, 14, 7, 2);
+            entityvector.push_back(enemySpawn2);
+        }
+
+        if (enemySpawn2 != NULL) {
+            if (enemySpawn2->getHealth() <= 0) {
+                for (int i = 0; i < entityvector.size(); i++) {
+                    if (entityvector[i]->getName() == "bot2") {
+                        entityvector.erase(entityvector.begin()+i);
+                    }
+                }
+                delete enemySpawn1;
+                enemySpawn2 = NULL;
+                spawnDelay2.start();
+            }
+        }*/
         
         for (Entity* entity : entityvector) {
             AttackSprite* attack = dynamic_cast<AttackSprite*>(entity);
@@ -395,13 +432,17 @@ void Window::display() {
             Enemy* enemy = dynamic_cast<Enemy*>(entity);
             if (enemy != nullptr) {
                 // Update the movement of Attacks sprites
-                if (!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 3000) {
+                if (!attackCooldownenemy1.isStarted() || attackCooldownenemy1.getTime() >= 2000) {
                     std::cout << "test" << std::endl;
                     std::string owner = "bot1";
                     AttackSprite* fireball1 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()+100, 0, 1, owner);
                     entityvector.push_back(fireball1);
                     AttackSprite* fireball2 = AttackSprite::createFireball(renderer, enemySpawn1->getX(), enemySpawn1->getY()-100, 0, -1, owner);
                     entityvector.push_back(fireball2);
+                    AttackSprite* fireball3 = AttackSprite::createFireball(renderer, enemySpawn1->getX()+100, enemySpawn1->getY()+100, 1, 0, owner);
+                    entityvector.push_back(fireball3);
+                    AttackSprite* fireball4 = AttackSprite::createFireball(renderer, enemySpawn1->getX()-100, enemySpawn1->getY()-100, -1, 0, owner);
+                    entityvector.push_back(fireball4);
                     attackCooldownenemy1.start();
                 }
                 enemy->move(0, 0);
