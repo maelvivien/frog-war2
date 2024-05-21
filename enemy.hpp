@@ -5,7 +5,7 @@
 #include "player.hpp"
 #include <vector>
 #include <iostream> 
-
+// creation of the bots and the boss
 class Enemy : public Sprite {
 public:
     Enemy(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows);

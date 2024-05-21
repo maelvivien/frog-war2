@@ -13,7 +13,7 @@ public:
 
     static std::vector<Entity*>* _collisionvector;
     static void setCollisionVector(std::vector<Entity*>* collisionvector);
-    virtual void display() override;
+    virtual void display() override; 
     void animate(int row, bool flip = false);
     std::string& getName() override;
     bool test_collide(Entity* test, int dx, int dy);
@@ -30,6 +30,7 @@ public:
 
 private:
     int _health = 3;
+    // variable to animate the sprite
     int _frameWidth, _frameHeight;
     int _numFrames, _numColumns,_numRows;
     int _currentFrame,_currentRow;

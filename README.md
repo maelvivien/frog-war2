@@ -15,7 +15,7 @@ chrono
 thread
 
 
-Pour compiler le programme, si toute les bibliotheque precedentes sont installées, se compile avec un "make" puis se lance avec "./main"
+Pour compiler le programme, si toute les bibliotheque precedentes sont installées, il faut entrer "make" dans un terminal situé dans le dossier frogwar puis "./main" pour lancer le jeu.
 
 
 Frog war est un jeu de combat 1V1. L'idée de base est que 2 joueurs s'affrontes tout en affrontant des bots. Au bout d'un moment, un boss arrive. Si un joueur tue le boss en etant seul survivant, il debloque la victoire solo. Si les joueurs choisissent de ne pas se tuer et et arrivent à tuer le boss sans mourir, ils débloquent la victoire en duo.

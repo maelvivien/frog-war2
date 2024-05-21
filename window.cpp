@@ -153,6 +153,9 @@ void Window::display() {
     player1->setHealth(5);
     player2->setHealth(3);
 
+    int actionj1 = 0; // used to set which sprite to use
+    int actionj2 = 0; 
+
     while (running) {
 
 
@@ -247,16 +250,16 @@ void Window::display() {
         }
         player1->move(dx, dy, isJumping); // actualisation of the player
 
-        // Animate and display the sprite
-        if (isJumping) action = 1;
-        else action = 0;
+        // Animate the sprite
+        if (flip) actionj1 = 0;
+        else if(player1->getStateInv())actionj1 = 2;
+        else actionj1 = 1;
 
 
         if (player1->getHealth() > 0) {
             Sprite* sprite = dynamic_cast<Sprite*>(player1);
             if (sprite != nullptr) {
-                sprite->animate(0, flip); // Animate the first row of the sprite sheet
-                player1->display(); // Render the sprite to the renderer
+                sprite->animate(actionj1, flip); // Animate the first row of the sprite sheet
             }
         }
 
@@ -371,15 +374,15 @@ void Window::display() {
 
         player2->move(dx, dy, isJumping);
 
-        if(isJumping)action = 1;
-        else action = 0;
+        if (flip2) actionj2 = 0;
+        else if(player2->getStateInv())actionj2 = 2;
+        else actionj2 = 1;
 
         // Animate J2's sprite if still alive
         if (player2->getHealth() > 0) {
             Sprite* sprite2 = dynamic_cast<Sprite*>(player2);
             if (sprite2 != nullptr) {
-                sprite2->animate(0, flip2); // Animate the first row of the sprite sheet
-                player2->display(); // Render the sprite to the renderer
+                sprite2->animate(actionj2, flip2); // Animate the first row of the sprite sheet
             }
         }
 
@@ -574,7 +577,7 @@ void Window::display() {
                 attack->move(0, 0);
                 attack->update(entityvector); 
                 attack->animate(0, sensattack); // Animate the first row of the sprite sheet
-                attack->display(); // Render the sprite to the renderer
+                
             }
             Enemy* enemy = dynamic_cast<Enemy*>(entity);
             if (enemy != nullptr) {
@@ -669,12 +672,12 @@ void Window::display() {
                 enemy->move(0, 0);
                 enemy->update(entityvector); 
                 enemy->animate(0, 1); // Animate the first row of the sprite sheet
-                enemy->display(); // Render the sprite to the renderer
+                
             }
         }
 
         SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call
-        std::this_thread::sleep_for(std::chrono::milliseconds(8));
+        std::this_thread::sleep_for(std::chrono::milliseconds(8)); // we make a pause to have a reasonnable speed of the game, it would be better to use the sdl function to set the fps of the game
     }
 }
 

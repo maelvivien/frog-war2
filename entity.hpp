@@ -6,7 +6,7 @@
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <iostream>
-
+// entity is the virtual class wich is used to create all the elements of the game
 class Entity {
 public:
     virtual ~Entity() = default;
@@ -27,7 +27,7 @@ protected:
     SDL_Texture* _texture;
     SDL_Renderer* _renderer;
     int _x, _y, _width, _height;
-    int gravity = 2 ,yspeed = 0,xspeed = 0,MAX_XSPEED = 4;
+    int gravity = 2 ,yspeed = 0,xspeed = 0,MAX_XSPEED = 5;
     float jumpTime = 0.0f; // New variable to track jump time
     float maxJumpTime = 1; // Maximum allowed jump time
     float frottement = 1;

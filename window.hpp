@@ -18,8 +18,8 @@ public:
     Window(const std::string& image_path, int width, int height);
     void window_init();
     ~Window();
-    void display();
-    void displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, const char* imagePath4, int displayDuration, int transitionDuration);
+    void display(); // main game loop
+    void displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, const char* imagePath4, int displayDuration, int transitionDuration); // small intro
     int menu(const char* backgroundImagePath);
 
 private:

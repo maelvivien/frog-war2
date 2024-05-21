@@ -4,8 +4,8 @@
 Player::Player(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows)
     : Sprite(renderer, name, image_path, x, y, width, height, frameWidth, frameHeight, numFrames, numColumns, numRows) {
     
-    
-    SDL_Surface* player1 = IMG_Load("texture/player1.png");
+    // we load the texture to display the health of the player
+    SDL_Surface* player1 = IMG_Load("texture/player1.png"); 
     player1Texture = SDL_CreateTextureFromSurface(_renderer, player1);
     SDL_FreeSurface(player1);
 
@@ -23,7 +23,7 @@ Player::Player(SDL_Renderer* renderer, const std::string& name, const std::strin
     
     
     }
-
+//destructor
 Player::~Player() {
     SDL_DestroyTexture(player1Texture);
     SDL_DestroyTexture(player2Texture);
@@ -40,7 +40,7 @@ void Player::gotHit(int damage) {
         std::cout << "HP = " << getHealth() << std::endl;
     }
 }
-
+// we itarate over the players health to display their number of hearts
 void Player::displayHealth(int pv1, int pv2) {
     // Render the player 1 texture
     if (player1Texture) {
@@ -99,6 +99,6 @@ int Player::getAttackType() {
 }
 
 bool Player::getStateInv() {
-    if (_invulnerabiltyFrames.isStarted() && _invulnerabiltyFrames.getTime() <= 10000) return true;
+    if (_invulnerabiltyFrames.isStarted() && _invulnerabiltyFrames.getTime() <= 3000) return true;
     else return false;
 }

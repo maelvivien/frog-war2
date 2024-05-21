@@ -25,7 +25,7 @@ private:
     SDL_Texture* blueHeartTexture;
     SDL_Texture* greenHeartTexture;
     int _attackType = 0;
-    //int _health = 3;
+
 
 };
 
