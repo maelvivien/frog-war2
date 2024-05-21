@@ -75,11 +75,9 @@ void Window::window_init(){
         collisionvector.push_back(collision);
 
         Sprite::setCollisionVector(&collisionvector);
+        gMusic = Mix_LoadMUS("sound/music.ogg");
     }
-    //if (image_path == "texture/background2.png") {
-    //    gMusic = Mix_LoadMUS( "sound/music2.ogg");
-    //}
-    //Mix_PlayMusic( gMusic, -1 );
+    Mix_PlayMusic( gMusic, -1 );
     
 }
 
@@ -263,7 +261,7 @@ void Window::display() {
             }
         }
 
-        if (alive && player1->getHealth() <= 0) {
+        if (p1alive && player1->getHealth() <= 0) {
             //window_init();
             printf("PROC\n");
             for (int i = 0; i < entityvector.size(); i++) {
@@ -280,30 +278,8 @@ void Window::display() {
                     std::cout << collisionvector.size() << std::endl;
                 }
             }
-            alive = false;
+            p1alive = false;
         }
-        else if (!alive && player1->getHealth() > 0 && boss != NULL) {
-            ////////////////
-            //// ENDING ////
-            ////////////////
-            std::cout << "The winner is player 1!\n" << std::endl;
-            std::cout << "Press escape to leave the game" << std::endl;
-            SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
-            if (texture1 == nullptr) {
-                std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
-            } else {
-                SDL_Rect dst;
-                dst.x = 0;
-                dst.y = 0; 
-                dst.w = 1920; 
-                dst.h = 1080; 
-                SDL_RenderCopy(renderer, texture1, NULL, &dst);
-            }
-
-            // Present the renderer
-            SDL_RenderPresent(renderer);
-        }
-
 
         /////////////////////////////////////////////////////////////////////////////
         // Player 2
@@ -387,7 +363,7 @@ void Window::display() {
         }
 
         // Same as J1
-        if (alive && player2->getHealth() <= 0) {
+        if (p2alive && player2->getHealth() <= 0) {
             for (int i = 0; i < entityvector.size(); i++) {
                 if (entityvector[i]->getName() == "Player2") {
                     entityvector.erase(entityvector.begin()+i);
@@ -400,33 +376,12 @@ void Window::display() {
                     std::cout << collisionvector.size() << std::endl;
                 }
             }
-            alive = false;
-        }
-        else if (!alive && player2->getHealth() > 0 && boss != NULL) {
-            ////////////////
-            //// ENDING ////
-            ////////////////
-            std::cout << "The winner is player 2!\n" << std::endl;
-            std::cout << "Press escape to leave the game" << std::endl;
-            SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
-            if (texture1 == nullptr) {
-                std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
-            } else {
-                SDL_Rect dst;
-                dst.x = 0;
-                dst.y = 0; 
-                dst.w = 1920; 
-                dst.h = 1080; 
-                SDL_RenderCopy(renderer, texture1, NULL, &dst);
-            }
-
-            // Present the renderer
-            SDL_RenderPresent(renderer);
+            p2alive = false;
         }
 
         // if both players are dead, the game is over
 
-        if ( player2->getHealth() < 0 && player1->getHealth() < 0) {
+        if ( !p1alive && !p2alive) {
             ////////////////
             //// ENDING ////
             ////////////////
@@ -451,7 +406,7 @@ void Window::display() {
         ///////////////////////////////////////////////////////////////////////////////////
 
         // Health display
-        if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)&& (alive || player2->getHealth() > 0)){
+        if((!heartDisplayCoolDown.isStarted() || heartDisplayCoolDown.getTime() >= 5)&& (p1alive || p2alive)){
             player1->displayHealth(player1->getHealth(),player2->getHealth());
             if (!heartDisplayCoolDown.isStarted()) heartDisplayCoolDown.start();
             else {
@@ -532,7 +487,7 @@ void Window::display() {
             enemySpawn1 = NULL;
             boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 150, 150, 14, 7, 3);
             entityvector.push_back(boss);
-            
+            spawnDelayboss.stop();
             
         }
 
@@ -551,21 +506,77 @@ void Window::display() {
                 //// ENDING ////
                 ////////////////
 
-                SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/happyending.png");
-                if (texture1 == nullptr) {
-                    std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
-                } else {
-                    SDL_Rect dst;
-                    dst.x = 0;
-                    dst.y = 0; 
-                    dst.w = 1920; 
-                    dst.h = 1080; 
-                    SDL_RenderCopy(renderer, texture1, NULL, &dst);
-                }
+                if (!p2alive) {
+                    std::cout << "The winner is player 1!\n" << std::endl;
+                    std::cout << "Press escape to leave the game" << std::endl;
+                    SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
+                    if (texture1 == nullptr) {
+                        std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+                    } else {
+                        SDL_Rect dst;
+                        dst.x = 0;
+                        dst.y = 0; 
+                        dst.w = 1920; 
+                        dst.h = 1080; 
+                        SDL_RenderCopy(renderer, texture1, NULL, &dst);
+                    }
 
-                // Present the renderer
-                SDL_RenderPresent(renderer);
+                    // Present the renderer
+                    SDL_RenderPresent(renderer);
+
                 }
+                else if (!p1alive) {
+                    std::cout << "The winner is player 2!\n" << std::endl;
+                    std::cout << "Press escape to leave the game" << std::endl;
+                    SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/solowin.png");
+                    if (texture1 == nullptr) {
+                        std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+                    } else {
+                        SDL_Rect dst;
+                        dst.x = 0;
+                        dst.y = 0; 
+                        dst.w = 1920; 
+                        dst.h = 1080; 
+                        SDL_RenderCopy(renderer, texture1, NULL, &dst);
+                    }
+
+                    // Present the renderer
+                    SDL_RenderPresent(renderer);
+                }
+                else {
+                    SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/happyending.png");
+                    if (texture1 == nullptr) {
+                        std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
+                    } else {
+                        SDL_Rect dst;
+                        dst.x = 0;
+                        dst.y = 0; 
+                        dst.w = 1920; 
+                        dst.h = 1080; 
+                        SDL_RenderCopy(renderer, texture1, NULL, &dst);
+                    }
+
+                    // Present the renderer
+                    SDL_RenderPresent(renderer);
+                }
+                gMusic = Mix_LoadMUS("sound/victory.ogg");
+                Mix_PlayMusic(gMusic, -1);
+                while (running)
+                {
+                    if (SDL_WaitEvent(&event)) 
+                    {
+
+                        switch (event.type)
+                        {
+                            case SDL_KEYDOWN:
+                                if (keyState[SDL_SCANCODE_ESCAPE]) {
+                                    printf("Game finished\n");
+                                    running = false;
+                                }
+                        }
+                    }
+                }
+            }       
         }
         
         // Handle the entities inside the vector (here either projectiles or enemies)
