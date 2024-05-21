@@ -33,7 +33,7 @@ Player::~Player() {
 
 
 void Player::gotHit(int damage) {
-    if (!_invulnerabiltyFrames.isStarted() || _invulnerabiltyFrames.getTime() >= 10000) {
+    if (!_invulnerabiltyFrames.isStarted() || _invulnerabiltyFrames.getTime() >= 3000) {
         _invulnerabiltyFrames.start();
         std::cout << "HP = " << getHealth() << std::endl;
         setHealth(getHealth()-damage);

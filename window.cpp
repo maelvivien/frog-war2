@@ -569,7 +569,7 @@ void Window::display() {
                 {
                     if (SDL_WaitEvent(&event)) 
                     {
-
+                    
                         switch (event.type)
                         {
                             case SDL_KEYDOWN:
@@ -577,8 +577,7 @@ void Window::display() {
                                     printf("Game finished\n");
                                     running = false;
                                 }
-                            case SDL_QUIT :
-                                running = false;
+                           
                         }
                     }
                 }
