@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 
-Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns)
+Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::string& image_path, int x, int y, int width, int height, int frameWidth, int frameHeight, int numFrames, int numColumns, int numRows)
 {
     _renderer = renderer;
     _name = name;
@@ -15,7 +15,9 @@ Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::strin
     _frameHeight = frameHeight;
     _numFrames = numFrames;
     _numColumns = numColumns;
+    _numRows = numRows;
     _currentFrame = 0;
+    _currentRow = 0;
     _frameTime = 100;
     _lastFrameTime = 0;
     _flipType = SDL_FLIP_NONE;
@@ -25,10 +27,10 @@ Sprite::Sprite(SDL_Renderer* renderer, const std::string& name, const std::strin
     SDL_FreeSurface(image);
 }
 
-std::vector<Entity*>* Sprite::_collisionVector = nullptr;
+std::vector<Entity*>* Sprite::_collisionvector = nullptr;
 
-void Sprite::setCollisionVector(std::vector<Entity*>* collisionVector) {
-    _collisionVector = collisionVector;
+void Sprite::setCollisionVector(std::vector<Entity*>* collisionvector) {
+    _collisionvector = collisionvector;
 }
 
 
@@ -69,9 +71,11 @@ void Sprite::animate(int row, bool flip) {
         _lastFrameTime = currentTime;
     }
 
+    _currentRow = row; // Update _currentRow
+
     SDL_Rect srcRect;
     srcRect.x = (_currentFrame % _numColumns) * _frameWidth;
-    srcRect.y = row * _frameHeight;
+    srcRect.y =  row * _frameHeight;
     srcRect.w = _frameWidth;
     srcRect.h = _frameHeight;
 
@@ -107,7 +111,7 @@ void Sprite::move(int dx, int dy, bool jump) {
     }
 
     if(dy == -1 && jumpTime < maxJumpTime ) { // Only allow jumping if jumpTime is less than maxJumpTime     
-        yspeed = -15;
+        yspeed = -16;
         jumpTime += 0.05f; // Increase jumpTime           
     }
 
@@ -118,7 +122,7 @@ void Sprite::move(int dx, int dy, bool jump) {
     bool isColliding = false;
     bool onGround = false;
 
-    for (Entity* other : *_collisionVector) {
+    for (auto& other : *_collisionvector) {
         if (other != this) {
             // Check for horizontal collision
             if (xspeed != 0 && this->test_collide(other, xspeed, 0)) {
@@ -134,7 +138,7 @@ void Sprite::move(int dx, int dy, bool jump) {
             }
 
             // Check for vertical collision
-            if (this->test_collide(other, 0, yspeed)) {
+            if (yspeed != 0 && this->test_collide(other, 0, yspeed)) {
                 // Adjust the sprite's vertical position
                 if (yspeed > 0) { // Moving down
                     _y -= 1;
@@ -147,17 +151,37 @@ void Sprite::move(int dx, int dy, bool jump) {
             }
         }
     }
+
     if (!onGround) {
-        _y += yspeed; // Apply gravity       
+        _y += yspeed; // Apply gravity
     }
-    else if(!jump){
+     else if(!jump){
         jumpTime = 0;
-        
-    } 
+    }
 
     _x += xspeed;
-    std::cout << "_x: " << _x << ", _y: " << _y << std::endl;
-    //std::cout << "jumpTime: " << jumpTime << std::endl;
+}
+
+void Sprite::attack(int damage, int size, std::vector<Entity*> entityvector){
+    for (long unsigned int i = 0; i < entityvector.size(); i++) {
+        if (entityvector[i]->getName() != getName()){
+            if (test_collide(entityvector[i], size, 0)){
+                printf("collision\n");
+                entityvector[i]->gotHit(damage);
+            }
+            else {
+                printf("miss\n");
+            }
+        }
+    }
+}
+
+void Sprite::setHealth(int value) {
+    _health = value;
+}
+
+int Sprite::getHealth() {
+    return _health;
 }
 
 std::string& Sprite::getName(){
@@ -185,3 +209,5 @@ bool Sprite::test_collide(Entity* test, int dx, int dy){
         && (getY() + getHeight() + dy > test->getY() && getY() + dy < test->getY() + test->getHeight())) return true;
     return false;
 }
+
+void Sprite::gotHit(int damage){}

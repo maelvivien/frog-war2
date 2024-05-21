@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" modified="2024-05-20T21:00:14.126Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0" etag="xM6AjFMDNmTCjkpvrVm6" version="24.3.1" type="device">
+  <diagram name="Page-1" id="a7C0-N5rrb2R_Lx5CJH4">
+    <mxGraphModel dx="1600" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="60" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-2" value="&lt;div&gt;window&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="60" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-3" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="230" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-4" value="joueur" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="230" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-5" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="460" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-6" value="sprite" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="460" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-7" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="520" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-8" value="enemy" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="520" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-9" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="870" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-10" value="timer" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="870" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-11" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="870" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-12" value="&lt;div&gt;entity&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="870" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-13" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1180" width="210" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="trD3EaFmUx9S-NBrNaOe-14" value="attackSprite" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1180" width="210" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

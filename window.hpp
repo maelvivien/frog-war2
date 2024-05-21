@@ -5,7 +5,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
-#include "sprite.hpp"
+#include "enemy.hpp"
+#include "player.hpp"
+#include "timer.hpp"
+#include "attacksprite.hpp"
 #include <vector>
 #include <SDL2/SDL_mixer.h>
 #include <iostream>
@@ -15,7 +18,9 @@ public:
     Window(const std::string& image_path, int width, int height);
     void window_init();
     ~Window();
-    void display();
+    void display(); // main game loop
+    void displayImagesWithTransition(const char* imagePath1, const char* imagePath2, const char* imagePath3, const char* imagePath4, int displayDuration, int transitionDuration); // small intro
+    int menu(const char* backgroundImagePath);
 
 private:
     int width, height;
@@ -23,10 +28,13 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
-    Sprite* entity;
+    Player* player1;
+    Player* player2;
     std::vector<Entity*> entityvector;
     std::vector<Entity*> collisionvector;
     Mix_Music* gMusic;
+    bool p1alive = true, p2alive = true;
+    void fadeTransition(SDL_Texture* startTexture, SDL_Texture* endTexture, int transitionDuration);
 };
 
 #endif // WINDOW_HPP
