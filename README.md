@@ -24,3 +24,7 @@ Frog war est un jeu de combat 1V1. L'idée de base est que 2 joueurs s'affrontes
 
 Par manque de temps nous avons malheureusement du supprimer certaines fonctionnalitées prevues à la base comme des items bonus laché par les enemis de la premiere phase de jeux
 Les joueur devait aussi pouvoir changer d'armes, actuellement il est possible de changer le mode boule de feu ou épée dand le code mais pas en jeu.
+
+
+lien du git : https://github.com/maelvivien/frog-war2.git
+
