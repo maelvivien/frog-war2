@@ -577,6 +577,8 @@ void Window::display() {
                                     printf("Game finished\n");
                                     running = false;
                                 }
+                            case SDL_QUIT :
+                                running = false;
                         }
                     }
                 }
