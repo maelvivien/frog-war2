@@ -148,8 +148,8 @@ void Window::display() {
 
     player1->setAttackType(0);
     player2->setAttackType(1);
-    player1->setHealth(5);
-    player2->setHealth(3);
+    player1->setHealth(7);
+    player2->setHealth(5);
 
     int actionj1 = 0; // used to set which sprite to use
     int actionj2 = 0; 
@@ -440,6 +440,7 @@ void Window::display() {
         // Enemis spawn after a certain delay, if the boss isn't present
 	    if (enemySpawn1 == NULL && spawnDelay1.getTime() >= 10000 && boss == NULL) {
             enemySpawn1 = new Enemy(renderer, "bot1", "texture/bot1.png", 850, 500, 100, 100, 100, 100, 21, 7, 3);
+            enemySpawn1->setHealth(2);
             entityvector.push_back(enemySpawn1);
         }
 
@@ -486,6 +487,7 @@ void Window::display() {
             delete enemySpawn1;
             enemySpawn1 = NULL;
             boss = new Enemy(renderer, "boss", "texture/boss.png", 850, 800, 200, 200, 150, 150, 14, 7, 3);
+            boss->setHealth(5);
             entityvector.push_back(boss);
             spawnDelayboss.stop();
             
@@ -544,7 +546,9 @@ void Window::display() {
                     SDL_RenderPresent(renderer);
                 }
                 else {
-                    SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/happyending.png");
+                    std::cout << "you have win as a team, the pond is now in peace!\n" << std::endl;
+                    std::cout << "Press escape to leave the game" << std::endl;
+                    SDL_Texture* texture1 = IMG_LoadTexture(renderer, "texture/happyending.png");                   
                     if (texture1 == nullptr) {
                         std::cerr << "Failed to load texture: " << IMG_GetError() << std::endl;
                     } else {

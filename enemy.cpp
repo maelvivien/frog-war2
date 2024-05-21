@@ -30,7 +30,7 @@ void Enemy::move(int dx, int dy) {
 }
 
 void Enemy::gotHit(int damage) {
-    setHealth(0);
+    setHealth(getHealth()-damage);
 }
 
 
